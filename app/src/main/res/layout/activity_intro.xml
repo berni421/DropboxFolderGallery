@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IntroActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/introWelcomeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/introPermissionsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/permissons"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/introWelcomeTextView" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/introPermissionsImage00"
+                android:layout_width="128dp"
+                android:layout_height="192dp"
+                android:contentDescription="@string/contentDescription"
+                app:srcCompat="@drawable/dropbox_login"
+                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage01" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/introPermissionsImage01"
+                android:layout_width="128dp"
+                android:layout_height="192dp"
+                android:contentDescription="@string/contentDescription"
+                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage02"
+                app:layout_constraintStart_toEndOf="@id/introPermissionsImage00"
+                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
+                app:srcCompat="@drawable/dropbox_permissions" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/introPermissionsImage02"
+                android:layout_width="128dp"
+                android:layout_height="192dp"
+                android:contentDescription="@string/contentDescription"
+                app:srcCompat="@drawable/android_permissions"
+                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
+                app:layout_constraintStart_toEndOf="@id/introPermissionsImage01"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/introNavigationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/navigation"
+                app:layout_constraintTop_toBottomOf="@id/introPermissionsImage00" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/introNavigationImage00"
+                android:layout_width="128dp"
+                android:layout_height="192dp"
+                android:contentDescription="@string/contentDescription"
+                app:srcCompat="@drawable/folders"
+                app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/introNavigationImage01" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/introNavigationImage01"
+                android:layout_width="128dp"
+                android:layout_height="192dp"
+                android:contentDescription="@string/contentDescription"
+                app:srcCompat="@drawable/gallery"
+                app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"
+                app:layout_constraintStart_toEndOf="@id/introNavigationImage00"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <CheckBox
+                android:layout_marginTop="10dp"
+                android:id="@+id/introCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dont_show_next_time"
+                app:layout_constraintTop_toBottomOf="@id/introNavigationImage00"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:layout_marginTop="10dp"
+                android:id="@+id/introImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/contentDescription"
+                android:src="@android:drawable/ic_media_play"
+                app:layout_constraintTop_toBottomOf="@id/introNavigationImage00"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

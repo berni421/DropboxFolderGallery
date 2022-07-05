@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/myImage00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@+id/myImage01"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/blank_foreground"/>
+
+    <ImageView
+        android:id="@+id/myImage01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/myImage00"
+        app:layout_constraintEnd_toStartOf="@+id/myImage02"
+        android:src="@drawable/blank_foreground" />
+
+    <ImageView
+        android:id="@+id/myImage02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/myImage01"
+        app:layout_constraintEnd_toStartOf="@+id/myImage03"
+        android:src="@drawable/blank_foreground" />
+
+    <ImageView
+        android:id="@+id/myImage03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/myImage02"
+        app:layout_constraintEnd_toStartOf="@+id/myImage04"
+        android:src="@drawable/blank_foreground" />
+
+    <ImageView
+        android:id="@+id/myImage04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/myImage03"
+        app:layout_constraintEnd_toStartOf="@+id/myImage05"
+        android:src="@drawable/blank_foreground" />
+
+    <ImageView
+        android:id="@+id/myImage05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/contentDescription"
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:padding="2dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/myImage04"
+        android:src="@drawable/blank_foreground" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
