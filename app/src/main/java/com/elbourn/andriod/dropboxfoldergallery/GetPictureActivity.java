@@ -35,7 +35,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GetPictureActivity extends AppCompatActivity implements SelectPictureViewAdapter.ItemClickListener {
+public class GetPictureActivity extends AppCompatActivity implements SelectPictureViewAdapter.ItemClickListener, SelectPictureViewAdapter.ItemLongClickListener {
     private static String APP = BuildConfig.APPLICATION_ID;
     private static String TAG = "GetPictureActivity";
     SelectPictureViewAdapter adapter = null;
@@ -89,6 +89,13 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "end onResume");
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Context context = getApplicationContext();
+//        finish(SelectPictureViewAdapter.class);
+//    }
+
     protected void processGraphicData() {
         Log.i(TAG, "start processGraphicData");
         Context context = getApplicationContext();
@@ -137,7 +144,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         // Get list of folders and files
         ListFolderBuilder folders = null;
         try {
-            folders = client.files().listFolderBuilder(folder).withLimit((long) 36).withRecursive(true);
+            folders = client.files().listFolderBuilder(folder).withLimit((long) 12).withRecursive(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -158,7 +165,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         }
         if (graphicDataList.size() == 0 && !hasMore) {
             Bitmap stopImage = convertToBitmap(getDrawable(R.drawable.stop_foreground), 64, 64);
-            GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, stopImage);
+            GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, null, stopImage);
             graphicDataList.add(graphicData);
         }
         Boolean setupRVviewNeeded = true;
@@ -183,7 +190,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         int totalImages = adapterImages.size();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = totalImages + " images scanned.";
+                String msg = totalImages + " images found.";
                 Log.i(TAG, "msg: " + msg);
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
@@ -241,19 +248,20 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     public ArrayList<GraphicData> getActualGraphicData(Context context, List<Metadata> entries) {
         Log.i(TAG, "start getActualGraphicData");
         ArrayList<GraphicData> graphicDataList = new ArrayList<>();
+        Log.i(TAG, "entries: " + entries);
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Downloading...please wait.";
+                String msg = "Downloading " + entries.size() + " more files. please wait.";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
-        Log.i(TAG, "entries: " + entries);
         for (Metadata fileMetadata : entries) {
             if (fileMetadata instanceof FileMetadata) {
                 // get thumbnail
                 try {
                     File path = context.getExternalFilesDir("");
                     String onLinePath = fileMetadata.getPathLower();
+                    String onLineFolder = onLinePath.substring(0, onLinePath.lastIndexOf(File.separator));
                     if (isImage(onLinePath)) {
                         // download image
                         String thumbnailName = "/thumbnail";
@@ -263,7 +271,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         // build graphic data arraylist
                         Bitmap bitmap = BitmapFactory.decodeFile(path + thumbnailName);
                         String fileName = fileMetadata.getName().toLowerCase();
-                        GraphicData graphicData = new GraphicData(path, onLinePath, fileName, bitmap);
+                        GraphicData graphicData = new GraphicData(path, onLinePath, onLineFolder, fileName, bitmap);
                         graphicDataList.add(graphicData);
                         Log.i(TAG, "added onlinePath path/fileName: " + onLinePath);
                     } else {
@@ -280,14 +288,15 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
 
     // set up the RecyclerView
     public void setupRView(ArrayList<GraphicData> myImages) {
-        Collections.sort(myImages, (lhs, rhs) -> lhs.fileName.compareTo(rhs.fileName));
+        Collections.sort(myImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
         Log.i(TAG, "start setupRView");
         Context context = getApplicationContext();
         Log.i(TAG, "myImages.size(): " + myImages.size());
-        adapter = new SelectPictureViewAdapter(context, myImages);
-        adapter.setClickListener(this);
-        RecyclerView recyclerView = findViewById(R.id.myImages);
         adapterImages = myImages;
+        adapter = new SelectPictureViewAdapter(context, adapterImages);
+        adapter.setClickListener(this);
+        adapter.setLongClickListener(this);
+        RecyclerView recyclerView = findViewById(R.id.myImages);
         runOnUiThread(new Runnable() {
             public void run() {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -299,25 +308,44 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     }
 
     // Update RecyclerView
-    public void updateRView(ArrayList<GraphicData> myImages) {
+    public void updateRView(ArrayList<GraphicData> newImages) {
         Log.i(TAG, "start updateRView");
-
-        int addItemPosition = adapterImages.size();
-        Log.i(TAG, "addItemPosition: " + addItemPosition);
-        adapterImages.addAll(addItemPosition, myImages);
-        Collections.sort(adapterImages, (lhs, rhs) -> lhs.fileName.compareTo(rhs.fileName));
-        int totalItems = adapterImages.size();
-        Log.i(TAG, "totalItems: " + totalItems);
-        int updatedItems = totalItems - addItemPosition;
-        Log.i(TAG, "updatedItems: " + updatedItems);
+        Log.i(TAG, "newImages.size(): " + newImages.size());
+        Log.i(TAG, "adapterImages.size(): " + adapterImages.size());
+        Collections.sort(newImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
+        int adapterImagesOldSize = adapterImages.size();
+        int position = 0;
+        while (position < adapterImages.size()) {
+            String folder = adapterImages.get(position).onlineFolder;
+            if (newImages.size() != 0) {
+                String newFolder = newImages.get(0).onlineFolder;
+                if (newFolder.compareTo(folder) <= 0) {
+                    adapterImages.add(position, newImages.get(0));
+                    newImages.remove(0);
+                    Log.i(TAG, "inserted position: " + position);
+                }
+            }
+            position++;
+        }
+        Log.i(TAG, "inserted updated adapterImages.size(): " + adapterImages.size());
+        if (newImages.size() != 0) {
+            int updatePosition = adapterImages.size();
+            int updatedSize = newImages.size();
+            adapterImages.addAll(newImages);
+        }
+        Log.i(TAG, "appended updated adapterImages.size(): " + adapterImages.size());
         runOnUiThread(new Runnable() {
             public void run() {
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemRangeChanged(0, adapterImagesOldSize);
+//                adapter.notifyItemRangeInserted(0, adapterImages.size());
             }
         });
+        Log.i(TAG, "newImages.size(): " + newImages.size());
+        Log.i(TAG, "adapterImages.size(): " + adapterImages.size());
         dumpAdapterToLog();
         Log.i(TAG, "end updateRView");
     }
+
 
     @Override
     public void onItemClick(View view, int position) {
@@ -331,10 +359,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             onlinePath = adapter.getItem(position).onlinePath;
         }
         Log.i(TAG, "position: " + onlinePath);
-        String msg = "You clicked " +
-                position +
-                " " +
-                onlinePath;
+        String msg = onlinePath + " chosen";
         Log.i(TAG, "msg: " + msg);
         runOnUiThread(new Runnable() {
             public void run() {
@@ -373,6 +398,28 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "end onItemClick");
     }
 
+    @Override
+    public void onLongItemClick(View view, int position) {
+        Log.i(TAG, "start onLongItemClick");
+        Context context = getApplicationContext();
+        Log.i(TAG, "position: " + position);
+        int items = adapterImages.size();
+        Log.i(TAG, "items: " + items);
+        String onlinePath = getString(R.string.blank);
+        if (position < items) {
+            onlinePath = adapter.getItem(position).onlinePath;
+        }
+        Log.i(TAG, "position: " + onlinePath);
+        String msg = onlinePath;
+        Log.i(TAG, "msg: " + msg);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+        Log.i(TAG, "end onLongItemClick");
+    }
+
     private void galleryScanThis(Uri uri) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(uri);
@@ -396,8 +443,9 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     }
 
     private void dumpAdapterToLog() {
-        for (int i=0; i<adapterImages.size(); i++) {
-            Log.i(TAG, "adapterImages[" + i + "]: " + adapterImages.get(i).fileName);
+        for (int i = 0; i < adapterImages.size(); i++) {
+            Log.i(TAG, "adapterImages[" + i + "].onlinePath: " + adapterImages.get(i).onlinePath);
+            Log.i(TAG, "adapterImages[" + i + "].onlineFolder: " + adapterImages.get(i).onlineFolder);
         }
     }
 }

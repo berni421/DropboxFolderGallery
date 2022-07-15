@@ -14,12 +14,14 @@ import androidx.core.content.ContextCompat;
 public class GraphicData {
 
    File path;
+   String onlineFolder;
    String onlinePath;
    String fileName;
    Bitmap thumbnail;
 
-   GraphicData(File p, String oP, String fN, Bitmap t) {
+   GraphicData(File p, String oP, String oF, String fN, Bitmap t) {
       path = p;
+      onlineFolder = oF;
       onlinePath = oP;
       fileName = fN;
       thumbnail = t;

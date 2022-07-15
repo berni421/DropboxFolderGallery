@@ -5,82 +5,91 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/myImage00"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toStartOf="@+id/myImage01"
-        app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/blank_foreground"/>
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/folderName">
 
-    <ImageView
-        android:id="@+id/myImage01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toEndOf="@+id/myImage00"
-        app:layout_constraintEnd_toStartOf="@+id/myImage02"
-        android:src="@drawable/blank_foreground" />
+        <ImageView
+            android:id="@+id/myImage00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
 
-    <ImageView
-        android:id="@+id/myImage02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toEndOf="@+id/myImage01"
-        app:layout_constraintEnd_toStartOf="@+id/myImage03"
-        android:src="@drawable/blank_foreground" />
+        <ImageView
+            android:id="@+id/myImage01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
 
-    <ImageView
-        android:id="@+id/myImage03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toEndOf="@+id/myImage02"
-        app:layout_constraintEnd_toStartOf="@+id/myImage04"
-        android:src="@drawable/blank_foreground" />
+        <ImageView
+            android:id="@+id/myImage02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
 
-    <ImageView
-        android:id="@+id/myImage04"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toEndOf="@+id/myImage03"
-        app:layout_constraintEnd_toStartOf="@+id/myImage05"
-        android:src="@drawable/blank_foreground" />
+        <ImageView
+            android:id="@+id/myImage03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
 
-    <ImageView
-        android:id="@+id/myImage05"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/myImage04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage05"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/folderName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/contentDescription"
-        android:minWidth="64dp"
-        android:minHeight="64dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/myImage04"
-        android:src="@drawable/blank_foreground" />
+        android:padding="@dimen/picture_padding"
+        tools:text="folder name goes here" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

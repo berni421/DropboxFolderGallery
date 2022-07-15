@@ -222,8 +222,8 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
         ArrayList<String> folderDataList = new ArrayList<>();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Downloading...please wait.";
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                String msg = "Downloading " + entries.size() + " items. please wait.";
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
         for (Metadata fileMetadata : entries) {
@@ -286,7 +286,7 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
 
     private void dumpAdapterToLog() {
         for (int i=0; i<adapterFolders.size(); i++) {
-            Log.i(TAG, "adapetFolder[" + i + "]: " + adapterFolders.get(i));
+            Log.i(TAG, "adapterFolder[" + i + "]: " + adapterFolders.get(i));
         }
     }
 
