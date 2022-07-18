@@ -229,11 +229,11 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
         for (Metadata fileMetadata : entries) {
             if (fileMetadata instanceof FolderMetadata) {
                 // get folder name
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 String folderName = fileMetadata.getName();
                 String onLinePath = fileMetadata.getPathLower();
                 folderDataList.add(folderName);
-                Log.i(TAG, "added onlinePath path/fileName: " + onLinePath + " " + path + "/" + folderName);
+                Log.i(TAG, "added onlinePath path/fileName: " + onLinePath + "/" + folderName);
             }
         }
         Log.i(TAG, "end getActualFolderData");

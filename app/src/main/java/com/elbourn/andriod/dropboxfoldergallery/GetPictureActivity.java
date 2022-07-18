@@ -1,5 +1,7 @@
 package com.elbourn.andriod.dropboxfoldergallery;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,11 +45,13 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     SelectPictureViewAdapter adapter = null;
     ArrayList<GraphicData> adapterImages = null;
     DbxClientV2 client;
-    String[] permissions = {
-            "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.INTERNET",
-            "android.permission.WRITE_EXTERNAL_STORAGE"
-    };
+//    String[] permissions = {
+//            "android.permission.READ_EXTERNAL_STORAGE",
+//            "android.permission.INTERNET",
+//            "android.permission.WRITE_EXTERNAL_STORAGE"
+//    };
+String[] permissions = {
+        "android.permission.INTERNET",};
     DropboxData dropboxData;
 
     @Override
@@ -259,15 +265,17 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             if (fileMetadata instanceof FileMetadata) {
                 // get thumbnail
                 try {
-                    File path = context.getExternalFilesDir("");
+//                    File path = context.getExternalFilesDir("");
+                    File path = context.getCacheDir();
                     String onLinePath = fileMetadata.getPathLower();
                     String onLineFolder = onLinePath.substring(0, onLinePath.lastIndexOf(File.separator));
                     if (isImage(onLinePath)) {
-                        // download image
-                        String thumbnailName = "/thumbnail";
-                        File file = new File(path, thumbnailName);
+                        // download image thumbnail
+                        String thumbnailName = File.separator + "thumbnail";
+                        File file = new File(context.getCacheDir(), thumbnailName);
                         OutputStream outputStream = new FileOutputStream(file);
                         client.files().getThumbnail(fileMetadata.getPathLower()).download(outputStream);
+                        outputStream.close();
                         // build graphic data arraylist
                         Bitmap bitmap = BitmapFactory.decodeFile(path + thumbnailName);
                         String fileName = fileMetadata.getName().toLowerCase();
@@ -377,12 +385,21 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-                        File galleryPath = getImagesDirectory();
-                        File file = new File(galleryPath, fileName);
-                        Log.i(TAG, "file: " + file);
-                        OutputStream outputStream = new FileOutputStream(file);
+//                        File galleryPath = getImagesDirectory();
+//                        File file = new File(galleryPath, fileName);
+                        ContentResolver resolver = getContentResolver();
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/*");
+                        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
+                        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                        Log.i(TAG, "Uri: " + imageUri);
+//                        OutputStream outputStream = new FileOutputStream(file);
+                        OutputStream outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
                         client.files().download(path).download(outputStream);
-                        galleryScanThis(Uri.fromFile(file));
+                        outputStream.close();
+                        // Open Gallery to view the download
+                        galleryScanThis(imageUri);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setType("image/*");
