@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.android.Auth;
@@ -94,6 +95,14 @@ public class AuthActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
         sharedPreferences.edit().putString("credential", dbxCredential.toString()).apply();
         Log.i(TAG, "end storeCredentialLocally");
+    }
+
+    //clear SharedPreferences
+    public static void disconnectDropbox(Context context) {
+        Log.i(TAG, "start disconnectDropbox");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
+        sharedPreferences.edit().remove("credential").apply();
+        Log.i(TAG, "end disconnectDropbox");
     }
 
     public static DbxClientV2 getDropboxClient(Context context, DbxCredential accessToken) {

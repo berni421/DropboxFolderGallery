@@ -95,13 +95,6 @@ String[] permissions = {
         Log.i(TAG, "end onResume");
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        Context context = getApplicationContext();
-//        finish(SelectPictureViewAdapter.class);
-//    }
-
     protected void processGraphicData() {
         Log.i(TAG, "start processGraphicData");
         Context context = getApplicationContext();

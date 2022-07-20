@@ -266,6 +266,25 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
                 getMoreFolderData();
             }
         });
+        ImageButton admin = findViewById(R.id.admin);
+        admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "admin clicked");
+                // start admin activity
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent aA = new Intent(context, AdminActivity.class);
+                            startActivity(aA);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
         Log.i(TAG, "end setupRView");
     }
 
