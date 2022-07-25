@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +47,6 @@ public class SelectFolderViewAdapter extends RecyclerView.Adapter<SelectFolderVi
             String folder = mData.get(row);
                 switch (i) {
                     case 0:
-                        Context context = this.context;
                         if (folder == context.getString(R.string.nosubfoldershere)) {
                             holder.playButton.setVisibility(View.INVISIBLE);
                         } else {

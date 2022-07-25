@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IntroActivity">
+    tools:context=".IntroActivity"
+    android:padding="10dp">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            >
 
             <CheckBox
                 android:id="@+id/introCheckBox"
@@ -30,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
+                android:contentDescription="touch to move to start Dropbox Folder Gallery"
                 android:src="@android:drawable/ic_media_play"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationImage00" />
@@ -40,7 +44,7 @@
                 android:layout_width="128dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
+                android:contentDescription="Dropbox Login"
                 app:layout_constraintEnd_toStartOf="@id/introPermissionsImage01"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
@@ -51,29 +55,29 @@
                 android:layout_width="128dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
-                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage02"
+                android:contentDescription="Dropbox Folder Permission request"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/introPermissionsImage00"
                 app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
                 app:srcCompat="@drawable/dropbox_permissions" />
 
-            <ImageView
-                android:id="@+id/introPermissionsImage02"
-                android:layout_width="128dp"
-                android:layout_height="192dp"
-                android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/introPermissionsImage01"
-                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
-                app:srcCompat="@drawable/android_permissions" />
+<!--            <ImageView-->
+<!--                android:id="@+id/introPermissionsImage02"-->
+<!--                android:layout_width="128dp"-->
+<!--                android:layout_height="192dp"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:contentDescription="Dropbox Folder Permission request"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toEndOf="@id/introPermissionsImage01"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"-->
+<!--                app:srcCompat="@drawable/android_permissions" />-->
 
             <ImageView
                 android:id="@+id/introNavigationImage00"
                 android:layout_width="128dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
+                android:contentDescription="Folder Page"
                 app:layout_constraintEnd_toStartOf="@id/introNavigationImage01"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"
@@ -84,8 +88,9 @@
                 android:layout_width="128dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
+                android:contentDescription="Administration Page"
                 app:layout_constraintStart_toEndOf="@id/introNavigationImage00"
+                app:layout_constraintEnd_toStartOf="@id/introNavigationImage02"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"
                 app:srcCompat="@drawable/admin" />
 
@@ -94,7 +99,7 @@
                 android:layout_width="128dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/contentDescription"
+                android:contentDescription="Thumbnails Page"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/introNavigationImage01"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"

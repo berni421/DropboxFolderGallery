@@ -244,7 +244,7 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
     public void setupRView(ArrayList<String> folderDataList) {
         Log.i(TAG, "start setupRView");
         Collections.sort(folderDataList, (lhs, rhs) -> lhs.compareTo(rhs));
-        Context context = getApplicationContext();
+        Context context = GetFolderActivity.this;
         RecyclerView recyclerView = findViewById(R.id.myFolders);
         adapterFolders = folderDataList;
         adapter = new SelectFolderViewAdapter(context, adapterFolders);

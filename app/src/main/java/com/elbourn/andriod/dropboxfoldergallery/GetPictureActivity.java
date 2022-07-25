@@ -36,6 +36,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,14 +46,15 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     SelectPictureViewAdapter adapter = null;
     ArrayList<GraphicData> adapterImages = null;
     DbxClientV2 client;
-//    String[] permissions = {
+    //    String[] permissions = {
 //            "android.permission.READ_EXTERNAL_STORAGE",
 //            "android.permission.INTERNET",
 //            "android.permission.WRITE_EXTERNAL_STORAGE"
 //    };
-String[] permissions = {
-        "android.permission.INTERNET",};
+    String[] permissions = {
+            "android.permission.INTERNET",};
     DropboxData dropboxData;
+    Boolean stopNetworkingThread = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,16 @@ String[] permissions = {
         Log.i(TAG, "end onResume");
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.i(TAG, "start onBackPressed");
+        stopNetworkingThread = true;
+        Log.i(TAG, "stopNetworking: " + stopNetworkingThread);
+        finish();
+        Log.i(TAG, "end onBackPressed");
+    }
+
     protected void processGraphicData() {
         Log.i(TAG, "start processGraphicData");
         Context context = getApplicationContext();
@@ -107,6 +119,7 @@ String[] permissions = {
     }
 
     public void NetworkUITasksThread(Context context, DbxCredential accessToken) {
+        stopNetworkingThread = false;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -162,38 +175,42 @@ String[] permissions = {
         if (entries != null) {
             graphicDataList = getActualGraphicData(context, entries);
         }
-        if (graphicDataList.size() == 0 && !hasMore) {
-            Bitmap stopImage = convertToBitmap(getDrawable(R.drawable.stop_foreground), 64, 64);
-            GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, null, stopImage);
-            graphicDataList.add(graphicData);
-        }
-        Boolean setupRVviewNeeded = true;
+        Boolean setupRVNeeded = true;
         if (graphicDataList.size() != 0) {
             setupRView(graphicDataList);
-            setupRVviewNeeded = false;
+            setupRVNeeded = false;
         }
         dropboxData = new DropboxData(client, cursor, hasMore);
-        while (dropboxData.hasMore) {
-            ArrayList<GraphicData> moreGraphicData = getMoreGraphicData();
-            if (setupRVviewNeeded) {
-                if (moreGraphicData.size() != 0) {
-                    setupRView(moreGraphicData);
-                    setupRVviewNeeded = false;
-                }
-            } else {
-                if (moreGraphicData.size() != 0) {
-                    updateRView(moreGraphicData);
+        ArrayList<GraphicData> moreGraphicDataList = null;
+        while (!stopNetworkingThread && dropboxData.hasMore) {
+            moreGraphicDataList = getMoreGraphicData();
+            if (moreGraphicDataList != null) {
+                if (moreGraphicDataList.size() != 0) {
+                    if (setupRVNeeded) {
+                        setupRView(moreGraphicDataList);
+                    } else {
+                        updateRView(moreGraphicDataList);
+                    }
                 }
             }
         }
-        int totalImages = adapterImages.size();
-        runOnUiThread(new Runnable() {
-            public void run() {
-                String msg = totalImages + " images found.";
-                Log.i(TAG, "msg: " + msg);
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-            }
-        });
+        if (!stopNetworkingThread && adapterImages == null && setupRVNeeded) {
+            Log.i(TAG, "setting empty image");
+            Bitmap stopImage = convertToBitmap(AppCompatResources.getDrawable(context, R.drawable.stop_foreground), 64, 64);
+            GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, null, stopImage);
+            graphicDataList.add(graphicData);
+            setupRView(graphicDataList);
+        }
+        if (!stopNetworkingThread && adapterImages != null) {
+            int totalImages = adapterImages.size();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    String msg = totalImages + " images found.";
+                    Log.i(TAG, "msg: " + msg);
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
         Log.i(TAG, "end getGraphicData");
     }
 
@@ -201,16 +218,21 @@ String[] permissions = {
         Log.i(TAG, "start getMoreGraphicData");
         Context context = getApplicationContext();
         ArrayList<GraphicData> moreGraphicData = null;
-        try {
-            ListFolderResult more = dropboxData.client.files().listFolderContinue(dropboxData.cursor);
-            List<Metadata> moreEntries = more.getEntries();
-            dropboxData.cursor = more.getCursor();
-            dropboxData.hasMore = more.getHasMore();
-            moreGraphicData = getActualGraphicData(context, moreEntries);
-        } catch (ListFolderContinueErrorException e) {
-            e.printStackTrace();
-        } catch (DbxException e) {
-            e.printStackTrace();
+        if (stopNetworkingThread) {
+            dropboxData.hasMore = false;
+            Log.i(TAG, "stopNetworking: " + stopNetworkingThread);
+        } else {
+            try {
+                ListFolderResult more = dropboxData.client.files().listFolderContinue(dropboxData.cursor);
+                List<Metadata> moreEntries = more.getEntries();
+                dropboxData.cursor = more.getCursor();
+                dropboxData.hasMore = more.getHasMore();
+                moreGraphicData = getActualGraphicData(context, moreEntries);
+            } catch (ListFolderContinueErrorException e) {
+                e.printStackTrace();
+            } catch (DbxException e) {
+                e.printStackTrace();
+            }
         }
         Log.i(TAG, "end getMoreGraphicData");
         return moreGraphicData;
@@ -283,7 +305,7 @@ String[] permissions = {
                 }
             }
         }
-        Log.i(TAG, "end getActualFolderData");
+        Log.i(TAG, "end getActualGraphicData");
         return graphicDataList;
     }
 
@@ -291,7 +313,7 @@ String[] permissions = {
     public void setupRView(ArrayList<GraphicData> myImages) {
         Collections.sort(myImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
         Log.i(TAG, "start setupRView");
-        Context context = getApplicationContext();
+        Context context = GetPictureActivity.this;
         Log.i(TAG, "myImages.size(): " + myImages.size());
         adapterImages = myImages;
         adapter = new SelectPictureViewAdapter(context, adapterImages);
