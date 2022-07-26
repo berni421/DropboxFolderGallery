@@ -240,30 +240,33 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
 
     Boolean isImage(String fileName) {
         Log.i(TAG, "start isImage");
-        Log.i(TAG, "fileName: " + fileName);
-
-//        JPEG (or JPG) - Joint Photographic Experts Group
-//        PNG - Portable Network Graphics
-//        GIF - Graphics Interchange Format
-//        TIFF - Tagged Image File
-//        PSD - Photoshop Document
-//        EPS - Encapsulated Postscript
-
-        Boolean isImage = false;
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        Log.i(TAG, "extension: " + extension);
-        switch (extension) {
-            case ".jpg":
-            case ".jpeg":
-            case ".png":
-            case ".tiff":
-            case ".psd":
-            case ".eps":
-                isImage = true;
-                break;
-        }
+        String mType = mimeType(fileName);
+        Boolean isImage = (mType != null);
+        Log.i(TAG, "isImage: " + isImage);
         Log.i(TAG, "end isImage");
         return isImage;
+    }
+
+    String mimeType(String fileName) {
+        Log.i(TAG, "start mimeType");
+        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+        String mType = null;
+        Log.i(TAG, "extension: " + extension);
+        switch (extension) {
+            case "jpg":
+            case "jpeg":
+                mType = "image/jpeg";
+                break;
+            case "png":
+            case "tiff":
+            case "psd":
+            case "eps":
+                mType  = "image/extension";
+                break;
+        }
+        Log.i(TAG, "mType: " + mType);
+        Log.i(TAG, "end mimeType");
+        return mType;
     }
 
     public ArrayList<GraphicData> getActualGraphicData(Context context, List<Metadata> entries) {
@@ -403,7 +406,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         ContentResolver resolver = getContentResolver();
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/*");
+                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType(fileName));
                         contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
                         Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                         Log.i(TAG, "Uri: " + imageUri);
@@ -414,7 +417,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         galleryScanThis(imageUri);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
-                        intent.setType("image/*");
+                        intent.setType(mimeType(fileName));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Log.i(TAG, "intent onItemClick");
                         startActivity(intent);

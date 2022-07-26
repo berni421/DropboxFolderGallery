@@ -23,6 +23,7 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
     private static String APP = BuildConfig.APPLICATION_ID;
     private static String TAG = "SelectPictureViewAdapter";
     int columns;
+    int maxColumns;
     int lastPosition;
     ArrayList<ArrayList<Integer>> positions;
 
@@ -43,9 +44,10 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
+        maxColumns = 6;
         columns = (int) (dpWidth / (64 + 2 + 2)); // thumbnail + padding
         Log.i(TAG, "columns: " + columns);
-        if (columns > 6 ) {
+        if (columns > maxColumns ) {
             columns = 6;
         }
     }
@@ -86,9 +88,14 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
             }
         }
         while (column < columns) {
-            Log.i(TAG, "resetting column: " + column);
+            Log.i(TAG, "nulling column: " + column);
             holder.imageViews.get(column).setImageBitmap(null);
             holder.imageViews.get(column).setTransitionName(null);
+            column++;
+        }
+        while (column < maxColumns) {
+            Log.i(TAG, "marking visibility gone column: " + column);
+            holder.imageViews.get(column).setVisibility(View.GONE);
             column++;
         }
         Log.i(TAG, "end myOnBindViewHolder");
