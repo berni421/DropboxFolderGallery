@@ -119,7 +119,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     }
 
     public void NetworkUITasksThread(Context context, DbxCredential accessToken) {
-        stopNetworkingThread = false;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -137,7 +136,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                             if (client == null) {
                                 String msg = "No images found";
                                 Log.i(TAG, "msg: " + msg);
-                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -182,26 +181,27 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         }
         dropboxData = new DropboxData(client, cursor, hasMore);
         ArrayList<GraphicData> moreGraphicDataList = null;
-        while (!stopNetworkingThread && dropboxData.hasMore) {
+        while (dropboxData.hasMore) {
             moreGraphicDataList = getMoreGraphicData();
             if (moreGraphicDataList != null) {
                 if (moreGraphicDataList.size() != 0) {
                     if (setupRVNeeded) {
                         setupRView(moreGraphicDataList);
+                        setupRVNeeded = false;
                     } else {
                         updateRView(moreGraphicDataList);
                     }
                 }
             }
         }
-        if (!stopNetworkingThread && adapterImages == null && setupRVNeeded) {
+        if (adapterImages == null && setupRVNeeded) {
             Log.i(TAG, "setting empty image");
             Bitmap stopImage = convertToBitmap(AppCompatResources.getDrawable(context, R.drawable.stop_foreground), 64, 64);
             GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, null, stopImage);
             graphicDataList.add(graphicData);
             setupRView(graphicDataList);
         }
-        if (!stopNetworkingThread && adapterImages != null) {
+        if (adapterImages != null) {
             int totalImages = adapterImages.size();
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -273,7 +273,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         runOnUiThread(new Runnable() {
             public void run() {
                 String msg = "Downloading " + entries.size() + " more files. please wait.";
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             }
         });
         for (Metadata fileMetadata : entries) {
@@ -400,8 +400,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-//                        File galleryPath = getImagesDirectory();
-//                        File file = new File(galleryPath, fileName);
                         ContentResolver resolver = getContentResolver();
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
@@ -409,7 +407,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
                         Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                         Log.i(TAG, "Uri: " + imageUri);
-//                        OutputStream outputStream = new FileOutputStream(file);
                         OutputStream outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
                         client.files().download(path).download(outputStream);
                         outputStream.close();

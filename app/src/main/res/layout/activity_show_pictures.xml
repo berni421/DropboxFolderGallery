@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GetPictureActivity"
-    android:padding="10dp">
+    tools:context=".GetPictureActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myImages"

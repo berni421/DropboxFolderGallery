@@ -1,7 +1,9 @@
 package com.elbourn.andriod.dropboxfoldergallery;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,9 +22,9 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
 
     private static String APP = BuildConfig.APPLICATION_ID;
     private static String TAG = "SelectPictureViewAdapter";
-    int columns = 6;
-    int lastPosition = 0;
-    ArrayList<ArrayList<Integer>> positions = null;
+    int columns;
+    int lastPosition;
+    ArrayList<ArrayList<Integer>> positions;
 
     private LayoutInflater mInflater;
     private List<GraphicData> mData;
@@ -36,7 +38,16 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
         mData = data;
         context = context;
         lastPosition = 0;
-        columns = 6;
+
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        columns = (int) (dpWidth / (64 + 2 + 2)); // thumbnail + padding
+        Log.i(TAG, "columns: " + columns);
+        if (columns > 6 ) {
+            columns = 6;
+        }
     }
 
     // inflates the row layout from xml when needed
@@ -62,7 +73,9 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
             if (column == 0) {
                 String thisFolder = mData.get(position).onlineFolder;
                 holder.myFolderName.setText(thisFolder);
-                if (position > 0) {
+                if (position < columns) {
+                    holder.myFolderName.setVisibility(View.VISIBLE);
+                } else {
                     String lastFolder = mData.get(position - 1).onlineFolder;
                     if (lastFolder.equals(thisFolder)){
                         holder.myFolderName.setVisibility(View.GONE);

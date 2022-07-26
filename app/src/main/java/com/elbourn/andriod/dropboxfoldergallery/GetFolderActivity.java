@@ -223,13 +223,12 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
         runOnUiThread(new Runnable() {
             public void run() {
                 String msg = "Downloading " + entries.size() + " items. please wait.";
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             }
         });
         for (Metadata fileMetadata : entries) {
             if (fileMetadata instanceof FolderMetadata) {
                 // get folder name
-//                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 String folderName = fileMetadata.getName();
                 String onLinePath = fileMetadata.getPathLower();
                 folderDataList.add(folderName);
