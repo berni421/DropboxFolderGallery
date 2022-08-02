@@ -1,5 +1,6 @@
 package com.elbourn.andriod.dropboxfoldergallery;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,6 +32,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,8 +44,11 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static androidx.core.content.FileProvider.getUriForFile;
 
 public class GetPictureActivity extends AppCompatActivity implements SelectPictureViewAdapter.ItemClickListener, SelectPictureViewAdapter.ItemLongClickListener {
     private static String APP = BuildConfig.APPLICATION_ID;
@@ -46,13 +56,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     SelectPictureViewAdapter adapter = null;
     ArrayList<GraphicData> adapterImages = null;
     DbxClientV2 client;
-    //    String[] permissions = {
-//            "android.permission.READ_EXTERNAL_STORAGE",
-//            "android.permission.INTERNET",
-//            "android.permission.WRITE_EXTERNAL_STORAGE"
-//    };
-    String[] permissions = {
-            "android.permission.INTERNET",};
     DropboxData dropboxData;
     Boolean stopNetworkingThread = false;
 
@@ -61,13 +64,25 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         super.onCreate(savedInstanceState);
         Log.i(TAG, "start onCreate");
         setContentView(R.layout.activity_show_pictures);
+        CheckPermissions();
+        Log.i(TAG, "end onCreate");
+    }
+
+    void CheckPermissions() {
+        String[] permissions = new String[]{"android.permission.INTERNET"};
+        if (Build.VERSION.SDK_INT < 29) {
+            permissions = new String[]{
+                    "android.permission.WRITE_EXTERNAL_STORAGE",
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.INTERNET"
+            };
+        }
         Context context = getApplicationContext();
         if (Permissions.hasPermissions(context, permissions)) {
             processGraphicData();
         } else {
             Permissions.requestPermissions(this, permissions, 1);
         }
-        Log.i(TAG, "end onCreate");
     }
 
     @Override
@@ -249,7 +264,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
 
     String mimeType(String fileName) {
         Log.i(TAG, "start mimeType");
-        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
         String mType = null;
         Log.i(TAG, "extension: " + extension);
         switch (extension) {
@@ -261,7 +276,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             case "tiff":
             case "psd":
             case "eps":
-                mType  = "image/extension";
+                mType = "image/extension";
                 break;
         }
         Log.i(TAG, "mType: " + mType);
@@ -299,9 +314,9 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         String fileName = fileMetadata.getName().toLowerCase();
                         GraphicData graphicData = new GraphicData(path, onLinePath, onLineFolder, fileName, bitmap);
                         graphicDataList.add(graphicData);
-                        Log.i(TAG, "added onlinePath path/fileName: " + onLinePath);
+                        Log.i(TAG, "added onlinePath: " + onLinePath);
                     } else {
-                        Log.i(TAG, "not added onlinePath path/fileName: " + onLinePath);
+                        Log.i(TAG, "not added onlinePath: " + onLinePath);
                     }
                 } catch (DbxException | IOException e) {
                     e.printStackTrace();
@@ -403,24 +418,63 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-                        ContentResolver resolver = getContentResolver();
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType(fileName));
-                        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
-                        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                        Log.i(TAG, "Uri: " + imageUri);
-                        OutputStream outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
-                        client.files().download(path).download(outputStream);
-                        outputStream.close();
-                        // Open Gallery to view the download
-                        galleryScanThis(imageUri);
+
+
+                        if (Build.VERSION.SDK_INT > 28) {
+                            // Define media store
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType(fileName));
+                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
+                            contentValues.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
+                            Log.i(TAG, "contentValues: " + contentValues);
+
+                            // Determine download location
+                            ContentResolver resolver = context.getContentResolver();
+                            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                            Log.i(TAG, "imageUri: " + imageUri);
+
+                            // Download the full sized image into location
+                            if (imageUri != null) {
+                                OutputStream outputStream = resolver.openOutputStream(imageUri);
+                                client.files().download(path).download(outputStream);
+                                outputStream.close();
+                                MediaScannerConnection.scanFile(context,
+                                        new String[]{imageUri.getPath()},
+                                        null, null);
+                            } else {
+                                String msg = "Failed to download image - try again later.";
+                                Log.i(TAG, "msg: " + msg);
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        } else {
+                            // Download the full sized image into location
+                            String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + File.separator + getString(R.string.app_name);
+                            File directory = new File(imagesDir);
+                            directory.mkdirs();
+                            File image = new File(imagesDir, fileName);
+                            OutputStream outputStream = new FileOutputStream(image);
+                            client.files().download(path).download(outputStream);
+                            outputStream.close();
+                            image.setLastModified((Long) System.currentTimeMillis() / 1000);
+                            Log.i(TAG, "image: " + image);
+                            MediaScannerConnection.scanFile(context,
+                                    new String[]{image.toString()},
+                                    null, null);
+                        }
+
+                        // Open app to view the download
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setType(mimeType(fileName));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Log.i(TAG, "intent onItemClick");
+                        Log.i(TAG, "starting view intent");
                         startActivity(intent);
+
                     } catch (IOException | DbxException e) {
                         e.printStackTrace();
                     }
@@ -458,13 +512,22 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         this.sendBroadcast(mediaScanIntent);
     }
 
-    private static File getImagesDirectory() {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + APP);
-        if (!file.mkdirs() && !file.isDirectory()) {
-            Log.e(TAG, "Directory not created");
-        }
-        return file;
-    }
+//    public boolean externalMemoryAvailable() {
+//        Activity context = this;
+//        File[] storages = ContextCompat.getExternalFilesDirs(context, null);
+//        if (storages.length > 1 && storages[0] != null && storages[1] != null)
+//            return true;
+//        else
+//            return false;
+//    }
+
+//    private static File getImagesDirectory() {
+//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + APP);
+//        if (!file.mkdirs() && !file.isDirectory()) {
+//            Log.e(TAG, "Directory not created");
+//        }
+//        return file;
+//    }
 
     public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
         Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);

@@ -9,8 +9,8 @@ android {
         applicationId "com.elbourn.andriod.dropboxfoldergallery"
         minSdk 21
         targetSdk 32
-        versionCode 6
-        versionName "0.6"
+        versionCode 7
+        versionName "1.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
