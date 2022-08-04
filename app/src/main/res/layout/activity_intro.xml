@@ -27,7 +27,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/dont_show_next_time"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/introNavigationImage00" />
+                app:layout_constraintTop_toBottomOf="@id/introNavigationImage02" />
 
             <ImageButton
                 android:id="@+id/introImageButton"
@@ -41,40 +41,40 @@
 
             <ImageView
                 android:id="@+id/introPermissionsImage00"
-                android:layout_width="128dp"
+                android:layout_width="96dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="Dropbox Login"
-                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage01"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage01"
                 app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
                 app:srcCompat="@drawable/dropbox_login" />
 
             <ImageView
                 android:id="@+id/introPermissionsImage01"
-                android:layout_width="128dp"
+                android:layout_width="96dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="Dropbox Folder Permission request"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/introPermissionsImage00"
+                app:layout_constraintEnd_toStartOf="@id/introPermissionsImage02"
                 app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
                 app:srcCompat="@drawable/dropbox_permissions" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/introPermissionsImage02"-->
-<!--                android:layout_width="128dp"-->
-<!--                android:layout_height="192dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:contentDescription="Dropbox Folder Permission request"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toEndOf="@id/introPermissionsImage01"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"-->
-<!--                app:srcCompat="@drawable/android_permissions" />-->
+            <ImageView
+                android:id="@+id/introPermissionsImage02"
+                android:layout_width="96dp"
+                android:layout_height="192dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="Android File Permission request"
+                app:layout_constraintStart_toEndOf="@id/introPermissionsImage01"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
+                app:srcCompat="@drawable/android_permissions" />
 
             <ImageView
                 android:id="@+id/introNavigationImage00"
-                android:layout_width="128dp"
+                android:layout_width="96dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="Folder Page"
@@ -85,7 +85,7 @@
 
             <ImageView
                 android:id="@+id/introNavigationImage01"
-                android:layout_width="128dp"
+                android:layout_width="96dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="Administration Page"
@@ -96,7 +96,7 @@
 
             <ImageView
                 android:id="@+id/introNavigationImage02"
-                android:layout_width="128dp"
+                android:layout_width="96dp"
                 android:layout_height="192dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="Thumbnails Page"

@@ -1,6 +1,5 @@
 package com.elbourn.andriod.dropboxfoldergallery;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,6 +16,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
@@ -32,19 +33,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,8 +50,8 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
     private static String TAG = "GetPictureActivity";
     SelectPictureViewAdapter adapter = null;
     ArrayList<GraphicData> adapterImages = null;
-    DbxClientV2 client;
-    DropboxData dropboxData;
+    DbxClientV2 client = null;
+    DropboxData dropboxData = null;
     Boolean stopNetworkingThread = false;
 
     @Override
@@ -170,7 +165,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         // Get list of folders and files
         ListFolderBuilder folders = null;
         try {
-            folders = client.files().listFolderBuilder(folder).withLimit((long) 12).withRecursive(true);
+            folders = client.files().listFolderBuilder(folder).withLimit((long) 12).withRecursive(true).withIncludeMediaInfo(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,7 +207,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         if (adapterImages == null && setupRVNeeded) {
             Log.i(TAG, "setting empty image");
             Bitmap stopImage = convertToBitmap(AppCompatResources.getDrawable(context, R.drawable.stop_foreground), 64, 64);
-            GraphicData graphicData = new GraphicData(null, getString(R.string.stop), null, null, stopImage);
+            GraphicData graphicData = new GraphicData(getString(R.string.stop), null, null, stopImage, null);
             graphicDataList.add(graphicData);
             setupRView(graphicDataList);
         }
@@ -298,7 +293,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             if (fileMetadata instanceof FileMetadata) {
                 // get thumbnail
                 try {
-//                    File path = context.getExternalFilesDir("");
                     File path = context.getCacheDir();
                     String onLinePath = fileMetadata.getPathLower();
                     String onLineFolder = onLinePath.substring(0, onLinePath.lastIndexOf(File.separator));
@@ -312,7 +306,8 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         // build graphic data arraylist
                         Bitmap bitmap = BitmapFactory.decodeFile(path + thumbnailName);
                         String fileName = fileMetadata.getName().toLowerCase();
-                        GraphicData graphicData = new GraphicData(path, onLinePath, onLineFolder, fileName, bitmap);
+                        Long clientModified = ((FileMetadata) fileMetadata).getClientModified().getTime(); // photo taken time not supported by Dropbox metadata
+                        GraphicData graphicData = new GraphicData(onLinePath, onLineFolder, fileName, bitmap, clientModified);
                         graphicDataList.add(graphicData);
                         Log.i(TAG, "added onlinePath: " + onLinePath);
                     } else {
@@ -329,12 +324,11 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
 
     // set up the RecyclerView
     public void setupRView(ArrayList<GraphicData> myImages) {
-        Collections.sort(myImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
         Log.i(TAG, "start setupRView");
         Context context = GetPictureActivity.this;
-        Log.i(TAG, "myImages.size(): " + myImages.size());
         adapterImages = myImages;
-        adapter = new SelectPictureViewAdapter(context, adapterImages);
+        Collections.sort(adapterImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
+        adapter = new SelectPictureViewAdapter(context, adapterImages, "folderNames");
         adapter.setClickListener(this);
         adapter.setLongClickListener(this);
         RecyclerView recyclerView = findViewById(R.id.myImages);
@@ -344,8 +338,67 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                 recyclerView.setAdapter(adapter);
             }
         });
+        Button fileTimes = findViewById(R.id.fileTimes);
+        fileTimes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "fileTimes clicked");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.sortOrder = "fileTimes";
+                        adapterSort();
+                        adapter.notifyDataSetChanged();
+//                        adapter.notifyItemRangeChanged(0, adapterImages.size());
+                    }
+                });
+            }
+        });
+        Button fileNames = findViewById(R.id.fileNames);
+        fileNames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "fileNames clicked");
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.sortOrder = "fileNames";
+                        adapterSort();
+                        adapter.notifyDataSetChanged();
+//                        adapter.notifyItemRangeChanged(0, adapterImages.size());
+                    }
+                });
+            }
+        });
+        Button folderNames = findViewById(R.id.folderNames);
+        folderNames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "folderNames clicked");
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.sortOrder = "folderNames";
+                        adapterSort();
+                        adapter.notifyDataSetChanged();
+//                        adapter.notifyItemRangeChanged(0, adapterImages.size());
+                    }
+                });
+            }
+        });
         dumpAdapterToLog();
         Log.i(TAG, "end setupRView");
+    }
+
+    void adapterSort() {
+        if (adapterImages != null) {
+            if (adapter.sortOrder == "fileTimes") {
+                Collections.sort(adapterImages, (lhs, rhs) -> lhs.sortDate.compareTo(rhs.sortDate));
+            } else if (adapter.sortOrder == "fileNames") {
+                Collections.sort(adapterImages, (lhs, rhs) -> lhs.fileName.compareTo(rhs.fileName));
+            } else {
+                Collections.sort(adapterImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
+            }
+        }
     }
 
     // Update RecyclerView
@@ -353,40 +406,19 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "start updateRView");
         Log.i(TAG, "newImages.size(): " + newImages.size());
         Log.i(TAG, "adapterImages.size(): " + adapterImages.size());
-        Collections.sort(newImages, (lhs, rhs) -> lhs.onlineFolder.compareTo(rhs.onlineFolder));
-        int adapterImagesOldSize = adapterImages.size();
-        int position = 0;
-        while (position < adapterImages.size()) {
-            String folder = adapterImages.get(position).onlineFolder;
-            if (newImages.size() != 0) {
-                String newFolder = newImages.get(0).onlineFolder;
-                if (newFolder.compareTo(folder) <= 0) {
-                    adapterImages.add(position, newImages.get(0));
-                    newImages.remove(0);
-                    Log.i(TAG, "inserted position: " + position);
-                }
-            }
-            position++;
-        }
-        Log.i(TAG, "inserted updated adapterImages.size(): " + adapterImages.size());
-        if (newImages.size() != 0) {
-            int updatePosition = adapterImages.size();
-            int updatedSize = newImages.size();
+        if (null != newImages) {
             adapterImages.addAll(newImages);
         }
-        Log.i(TAG, "appended updated adapterImages.size(): " + adapterImages.size());
+        adapterSort();
         runOnUiThread(new Runnable() {
             public void run() {
-                adapter.notifyItemRangeChanged(0, adapterImagesOldSize);
-//                adapter.notifyItemRangeInserted(0, adapterImages.size());
+                adapter.notifyItemRangeChanged(0, adapterImages.size());
             }
         });
-        Log.i(TAG, "newImages.size(): " + newImages.size());
         Log.i(TAG, "adapterImages.size(): " + adapterImages.size());
         dumpAdapterToLog();
         Log.i(TAG, "end updateRView");
     }
-
 
     @Override
     public void onItemClick(View view, int position) {
@@ -418,8 +450,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-
-
                         if (Build.VERSION.SDK_INT > 28) {
                             // Define media store
                             ContentValues contentValues = new ContentValues();
@@ -541,6 +571,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         for (int i = 0; i < adapterImages.size(); i++) {
             Log.i(TAG, "adapterImages[" + i + "].onlinePath: " + adapterImages.get(i).onlinePath);
             Log.i(TAG, "adapterImages[" + i + "].onlineFolder: " + adapterImages.get(i).onlineFolder);
+            Log.i(TAG, "adapterImages[" + i + "].date: " + adapterImages.get(i).displayDate);
         }
     }
 }

@@ -1,18 +1,17 @@
 package com.elbourn.andriod.dropboxfoldergallery;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +25,8 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
     int maxColumns;
     int lastPosition;
     ArrayList<ArrayList<Integer>> positions;
+    String sortOrder = "folderNames";;
+
 
     private LayoutInflater mInflater;
     private List<GraphicData> mData;
@@ -34,10 +35,9 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
     private Context context = null;
 
     // data is passed into the constructor
-    SelectPictureViewAdapter(Context context, List<GraphicData> data) {
+    SelectPictureViewAdapter(Context context, List<GraphicData> data, String sortOrder) {
         mInflater = LayoutInflater.from(context);
         mData = data;
-        context = context;
         lastPosition = 0;
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -69,16 +69,19 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
         for (column=0; column<columnsInRow; column++) {
             Log.i(TAG, "setting column: " + column);
             int position = positions.get(row).get(column);
-            Bitmap thumbnail = mData.get(position).thumbnail;
+            Log.i(TAG,"position: " + position);
+            GraphicData item = mData.get(position);
+            Bitmap thumbnail = item.thumbnail;
             holder.imageViews.get(column).setImageBitmap(thumbnail);
             holder.imageViews.get(column).setTransitionName(String.valueOf(position));
             if (column == 0) {
-                String thisFolder = mData.get(position).onlineFolder;
+                String thisFolder = GraphicData.getDisplayText(item, sortOrder);
                 holder.myFolderName.setText(thisFolder);
                 if (position < columns) {
                     holder.myFolderName.setVisibility(View.VISIBLE);
                 } else {
-                    String lastFolder = mData.get(position - 1).onlineFolder;
+                    GraphicData lastItem = mData.get(position - 1);
+                    String lastFolder = GraphicData.getDisplayText(lastItem, sortOrder);
                     if (lastFolder.equals(thisFolder)){
                         holder.myFolderName.setVisibility(View.GONE);
                     } else{
@@ -123,13 +126,13 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
     public int getItemCount() {
         Log.i(TAG, "start getItemCount");
         positions = new ArrayList<>();
-        String last = mData.get(0).onlineFolder;
+        String last = GraphicData.getDisplayText(mData.get(0), sortOrder);
         addRow(0);
         int position = 1;
         int items = mData.size();
         Log.i(TAG, "items: " + items);
         while (position < items) {
-            String current = mData.get(position).onlineFolder;
+            String current = GraphicData.getDisplayText(mData.get(position), sortOrder);
                 if (current.equals(last)) {
                     addColumn(position);
                 } else {
