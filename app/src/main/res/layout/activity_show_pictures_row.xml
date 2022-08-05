@@ -15,7 +15,7 @@
             android:id="@+id/myImage00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="myImage00 @string/contentDescription"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -27,7 +27,7 @@
             android:id="@+id/myImage01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="my image 01"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -39,7 +39,7 @@
             android:id="@+id/myImage02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="my image 02"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -51,7 +51,7 @@
             android:id="@+id/myImage03"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="my image 03"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -63,7 +63,7 @@
             android:id="@+id/myImage04"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="my image 04"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -75,7 +75,7 @@
             android:id="@+id/myImage05"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
+            android:contentDescription="my image 05"
             android:minWidth="64dp"
             android:minHeight="64dp"
             android:padding="@dimen/picture_padding"
@@ -83,6 +83,77 @@
             android:src="@drawable/blank_foreground"
             tools:srcCompat="@android:drawable/checkbox_on_background" />
 
+        <ImageView
+            android:id="@+id/myImage06"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 06"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage07"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 07"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage08"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 08"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage09"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 09"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 10"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/myImage11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="my image 11"
+            android:minWidth="64dp"
+            android:minHeight="64dp"
+            android:padding="@dimen/picture_padding"
+            android:scaleType="fitXY"
+            android:src="@drawable/blank_foreground"
+            tools:srcCompat="@android:drawable/checkbox_on_background" />
     </LinearLayout>
 
     <TextView
