@@ -44,11 +44,11 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-        maxColumns = 6;
+        maxColumns = 12;
         columns = (int) (dpWidth / (64 + 2 + 2)); // thumbnail + padding
         Log.i(TAG, "columns: " + columns);
         if (columns > maxColumns ) {
-            columns = 6;
+            columns = maxColumns;
         }
     }
 
@@ -180,6 +180,25 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
             imageViews.add(itemView.findViewById(R.id.myImage05));
             imageViews.get(5).setOnClickListener(this);
             imageViews.get(5).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage05));
+            imageViews.get(6).setOnClickListener(this);
+            imageViews.get(6).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage06));
+            imageViews.get(7).setOnClickListener(this);
+            imageViews.get(7).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage07));
+            imageViews.get(8).setOnClickListener(this);
+            imageViews.get(8).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage08));
+            imageViews.get(9).setOnClickListener(this);
+            imageViews.get(9).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage09));
+            imageViews.get(10).setOnClickListener(this);
+            imageViews.get(10).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage10));
+            imageViews.get(11).setOnClickListener(this);
+            imageViews.get(11).setOnLongClickListener(this);
+            imageViews.add(itemView.findViewById(R.id.myImage11));
         }
 
         @Override
