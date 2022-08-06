@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -25,8 +26,7 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
     int maxColumns;
     int lastPosition;
     ArrayList<ArrayList<Integer>> positions;
-    String sortOrder = "folderNames";;
-
+    String sortOrder = "folderNames";
 
     private LayoutInflater mInflater;
     private List<GraphicData> mData;
@@ -45,7 +45,7 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
         maxColumns = 12;
-        columns = (int) (dpWidth / (64 + 2 + 2)); // thumbnail + padding
+        columns = 1 + (int) (dpWidth / (64 + 2 + 2)); // thumbnail + padding
         Log.i(TAG, "columns: " + columns);
         if (columns > maxColumns ) {
             columns = maxColumns;
@@ -73,6 +73,7 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
             GraphicData item = mData.get(position);
             Bitmap thumbnail = item.thumbnail;
             holder.imageViews.get(column).setImageBitmap(thumbnail);
+            holder.imageViews.get(column).setVisibility(View.VISIBLE);
             holder.imageViews.get(column).setTransitionName(String.valueOf(position));
             if (column == 0) {
                 String thisFolder = GraphicData.getDisplayText(item, sortOrder);
@@ -90,14 +91,14 @@ public class SelectPictureViewAdapter extends RecyclerView.Adapter<SelectPicture
                 }
             }
         }
-        while (column < columns) {
-            Log.i(TAG, "nulling column: " + column);
-            holder.imageViews.get(column).setImageBitmap(null);
-            holder.imageViews.get(column).setTransitionName(null);
-            column++;
-        }
+//        while (column < columns) {
+//            Log.i(TAG, "nulling column: " + column);
+//            holder.imageViews.get(column).setImageBitmap(null);
+//            holder.imageViews.get(column).setTransitionName(null);
+//            column++;
+//        }
         while (column < maxColumns) {
-            Log.i(TAG, "marking visibility gone column: " + column);
+            Log.i(TAG, "marking gone column: " + column);
             holder.imageViews.get(column).setVisibility(View.GONE);
             column++;
         }

@@ -454,7 +454,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                             // Define media store
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType(fileName));
+                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/*");
                             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
                             contentValues.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
                             Log.i(TAG, "contentValues: " + contentValues);
@@ -500,7 +500,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         // Open app to view the download
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
-                        intent.setType(mimeType(fileName));
+                        intent.setType("image/*");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Log.i(TAG, "starting view intent");
                         startActivity(intent);
@@ -559,7 +559,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
 //        return file;
 //    }
 
-    public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
+    static public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
         Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(mutableBitmap);
         drawable.setBounds(0, 0, widthPixels, heightPixels);
