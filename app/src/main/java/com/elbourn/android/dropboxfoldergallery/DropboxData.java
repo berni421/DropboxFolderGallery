@@ -1,13 +1,6 @@
-package com.elbourn.andriod.dropboxfoldergallery;
-
-import android.content.Context;
+package com.elbourn.android.dropboxfoldergallery;
 
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.ListFolderResult;
-import com.dropbox.core.v2.files.Metadata;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DropboxData {
     DbxClientV2 client;

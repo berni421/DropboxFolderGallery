@@ -1,4 +1,4 @@
-package com.elbourn.andriod.dropboxfoldergallery;
+package com.elbourn.android.dropboxfoldergallery;
 
 import android.content.Context;
 import android.content.Intent;

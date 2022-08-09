@@ -1,4 +1,4 @@
-package com.elbourn.andriod.dropboxfoldergallery;
+package com.elbourn.android.dropboxfoldergallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 

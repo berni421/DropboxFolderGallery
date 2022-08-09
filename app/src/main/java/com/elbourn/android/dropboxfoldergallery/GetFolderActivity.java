@@ -1,9 +1,8 @@
-package com.elbourn.andriod.dropboxfoldergallery;
+package com.elbourn.android.dropboxfoldergallery;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,7 +17,6 @@ import com.dropbox.core.v2.files.ListFolderContinueErrorException;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

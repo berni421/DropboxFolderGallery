@@ -1,10 +1,8 @@
-package com.elbourn.andriod.dropboxfoldergallery;
+package com.elbourn.android.dropboxfoldergallery;
 
 import android.graphics.Bitmap;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 
 public class GraphicData {
 

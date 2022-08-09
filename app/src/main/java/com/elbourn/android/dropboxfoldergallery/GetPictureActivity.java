@@ -1,4 +1,4 @@
-package com.elbourn.andriod.dropboxfoldergallery;
+package com.elbourn.android.dropboxfoldergallery;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -17,7 +17,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
@@ -36,8 +35,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -450,18 +451,23 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-                        if (Build.VERSION.SDK_INT > 28) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
                             // Define media store
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+//                            contentValues.put(MediaStore.MediaColumns.ALBUM, getString(R.string.app_name));
                             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/*");
+//                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
+//                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM + File.separator + getString(R.string.app_name));
                             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
                             contentValues.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
+                            contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, System.currentTimeMillis() / 1000);
                             Log.i(TAG, "contentValues: " + contentValues);
 
                             // Determine download location
                             ContentResolver resolver = context.getContentResolver();
-                            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                            //                            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                            Uri imageUri = resolver.insert(getContentUri(context), contentValues);
                             Log.i(TAG, "imageUri: " + imageUri);
 
                             // Download the full sized image into location
@@ -542,23 +548,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         this.sendBroadcast(mediaScanIntent);
     }
 
-//    public boolean externalMemoryAvailable() {
-//        Activity context = this;
-//        File[] storages = ContextCompat.getExternalFilesDirs(context, null);
-//        if (storages.length > 1 && storages[0] != null && storages[1] != null)
-//            return true;
-//        else
-//            return false;
-//    }
-
-//    private static File getImagesDirectory() {
-//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + APP);
-//        if (!file.mkdirs() && !file.isDirectory()) {
-//            Log.e(TAG, "Directory not created");
-//        }
-//        return file;
-//    }
-
     static public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
         Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(mutableBitmap);
@@ -574,4 +563,35 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             Log.i(TAG, "adapterImages[" + i + "].date: " + adapterImages.get(i).displayDate);
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private Uri getContentUri(Context context) {
+        Log.i(TAG, "start getContentUri");
+        Set<String> externalVolumeNames = MediaStore.getExternalVolumeNames(context);
+
+        // Pick first one which is not external
+        Uri uri = null;
+        try {
+            String[] vol = externalVolumeNames.toArray(new String[0]);
+            for (int i=0; i<vol.length; i++) {
+                String volume = vol[i];
+                if (!volume.contains(MediaStore.VOLUME_EXTERNAL)) {
+                    uri = MediaStore.Images.Media.getContentUri(vol[i]);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (uri == null) {
+            uri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        }
+
+        Log.i(TAG, "externalVolumeNames: " + externalVolumeNames);
+        Log.i(TAG, "uri: " + uri);
+        Log.i(TAG, "end getContentUri");
+        return uri;
+    }
+
 }
