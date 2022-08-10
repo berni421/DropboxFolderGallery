@@ -208,7 +208,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         if (adapterImages == null && setupRVNeeded) {
             Log.i(TAG, "setting empty image");
             Bitmap stopImage = convertToBitmap(AppCompatResources.getDrawable(context, R.drawable.stop_foreground), 64, 64);
-            GraphicData graphicData = new GraphicData(getString(R.string.stop), null, null, stopImage, null);
+            GraphicData graphicData = new GraphicData(getString(R.string.stop), "", "", stopImage, 0L);
             graphicDataList.add(graphicData);
             setupRView(graphicDataList);
         }
@@ -433,7 +433,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
             onlinePath = adapter.getItem(position).onlinePath;
         }
         Log.i(TAG, "position: " + onlinePath);
-        String msg = onlinePath + " chosen";
+        String msg = onlinePath + " downloading.";
         Log.i(TAG, "msg: " + msg);
         runOnUiThread(new Runnable() {
             public void run() {
@@ -451,7 +451,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                         Metadata pathMetadata = client.files().getMetadata(oP);
                         String fileName = pathMetadata.getName().toLowerCase();
                         String path = pathMetadata.getPathLower();
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             // Define media store
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
