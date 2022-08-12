@@ -489,7 +489,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
                             }
                         } else {
                             // Download the full sized image into location
-                            String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + File.separator + getString(R.string.app_name);
+                            String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + getString(R.string.app_name);
                             File directory = new File(imagesDir);
                             directory.mkdirs();
                             File image = new File(imagesDir, fileName);
@@ -593,5 +593,4 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "end getContentUri");
         return uri;
     }
-
 }

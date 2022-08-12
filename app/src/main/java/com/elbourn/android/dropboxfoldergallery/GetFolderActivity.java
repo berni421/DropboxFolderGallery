@@ -315,7 +315,7 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
         Log.i(TAG, "row: " + row);
         Log.i(TAG, "column: " + column);
         String f = adapter.getItem(row);
-        String msg = "You clicked: " + f;
+        String msg = f + " downloading.";
         Log.i(TAG, "msg: " + msg);
         runOnUiThread(new Runnable() {
             public void run() {

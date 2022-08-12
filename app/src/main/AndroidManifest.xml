@@ -52,7 +52,7 @@
             android:name="com.elbourn.android.dropboxfoldergallery.AdminActivity"
             android:exported="false" />
     </application>
-<!--    Android Q = sdk >= 29 mediastore -->
+<!--    Android Q = sdk >= 29 = mediastore -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"/>
