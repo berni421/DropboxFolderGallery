@@ -61,7 +61,7 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "start onCreate");
         setContentView(R.layout.activity_show_pictures);
         CheckPermissions();
-        Log.i(TAG, "end onCreate");
+        Log.i(TAG, "end onCreate.");
     }
 
     void CheckPermissions() {
