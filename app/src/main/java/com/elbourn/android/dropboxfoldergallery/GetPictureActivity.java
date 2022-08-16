@@ -1,5 +1,6 @@
 package com.elbourn.android.dropboxfoldergallery;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.DownloadErrorException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderBuilder;
 import com.dropbox.core.v2.files.ListFolderContinueErrorException;
@@ -29,6 +31,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,10 +40,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,43 +66,10 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         super.onCreate(savedInstanceState);
         Log.i(TAG, "start onCreate");
         setContentView(R.layout.activity_show_pictures);
-        CheckPermissions();
-        Log.i(TAG, "end onCreate.");
+        processGraphicData();
+        Log.i(TAG, "end onCreate");
     }
 
-    void CheckPermissions() {
-        String[] permissions = new String[]{"android.permission.INTERNET"};
-        if (Build.VERSION.SDK_INT < 29) {
-            permissions = new String[]{
-                    "android.permission.WRITE_EXTERNAL_STORAGE",
-                    "android.permission.READ_EXTERNAL_STORAGE",
-                    "android.permission.INTERNET"
-            };
-        }
-        Context context = getApplicationContext();
-        if (Permissions.hasPermissions(context, permissions)) {
-            processGraphicData();
-        } else {
-            Permissions.requestPermissions(this, permissions, 1);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.i(TAG, "start onRequestPermissionsResult");
-        Context context = getApplicationContext();
-        if (requestCode == 1 && Permissions.hasPermissions(context, permissions)) {
-            processGraphicData();
-        } else {
-            String msg = "permissions not granted - pictures will not show";
-            Log.i(TAG, msg);
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        }
-        Log.i(TAG, "start onRequestPermissionsResult");
-    }
 
     @Override
     protected void onResume() {
@@ -432,90 +405,14 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         if (position < items) {
             onlinePath = adapter.getItem(position).onlinePath;
         }
-        Log.i(TAG, "position: " + onlinePath);
-        String msg = onlinePath + " downloading.";
-        Log.i(TAG, "msg: " + msg);
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Log.i(TAG, "onlinePath: " + onlinePath);
         if (onlinePath.equals(getString(R.string.stop)) || onlinePath.equals(getString(R.string.blank))) {
             Log.i(TAG, "blank or stop chosen onItemClick");
         } else {
-            final String oP = onlinePath;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Metadata pathMetadata = client.files().getMetadata(oP);
-                        String fileName = pathMetadata.getName().toLowerCase();
-                        String path = pathMetadata.getPathLower();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            // Define media store
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-//                            contentValues.put(MediaStore.MediaColumns.ALBUM, getString(R.string.app_name));
-                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/*");
-//                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
-//                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM + File.separator + getString(R.string.app_name));
-                            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + getString(R.string.app_name));
-                            contentValues.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
-                            contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, System.currentTimeMillis() / 1000);
-                            Log.i(TAG, "contentValues: " + contentValues);
-
-                            // Determine download location
-                            ContentResolver resolver = context.getContentResolver();
-                            //                            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                            Uri imageUri = resolver.insert(getContentUri(context), contentValues);
-                            Log.i(TAG, "imageUri: " + imageUri);
-
-                            // Download the full sized image into location
-                            if (imageUri != null) {
-                                OutputStream outputStream = resolver.openOutputStream(imageUri);
-                                client.files().download(path).download(outputStream);
-                                outputStream.close();
-                                MediaScannerConnection.scanFile(context,
-                                        new String[]{imageUri.getPath()},
-                                        null, null);
-                            } else {
-                                String msg = "Failed to download image - try again later.";
-                                Log.i(TAG, "msg: " + msg);
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        } else {
-                            // Download the full sized image into location
-                            String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + getString(R.string.app_name);
-                            File directory = new File(imagesDir);
-                            directory.mkdirs();
-                            File image = new File(imagesDir, fileName);
-                            OutputStream outputStream = new FileOutputStream(image);
-                            client.files().download(path).download(outputStream);
-                            outputStream.close();
-                            image.setLastModified((Long) System.currentTimeMillis() / 1000);
-                            Log.i(TAG, "image: " + image);
-                            MediaScannerConnection.scanFile(context,
-                                    new String[]{image.toString()},
-                                    null, null);
-                        }
-
-                        // Open app to view the download
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setType("image/*");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Log.i(TAG, "starting view intent");
-                        startActivity(intent);
-
-                    } catch (IOException | DbxException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            Intent dPA = new Intent(context, DownloadPictureActivity.class);
+            dPA.putExtra("onlinePath", onlinePath);
+            startActivity(dPA);
+            Log.i(TAG, "end onItemClick");
         }
         Log.i(TAG, "end onItemClick");
     }
@@ -542,12 +439,6 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         Log.i(TAG, "end onLongItemClick");
     }
 
-    private void galleryScanThis(Uri uri) {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        mediaScanIntent.setData(uri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
     static public Bitmap convertToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
         Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(mutableBitmap);
@@ -564,33 +455,5 @@ public class GetPictureActivity extends AppCompatActivity implements SelectPictu
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    private Uri getContentUri(Context context) {
-        Log.i(TAG, "start getContentUri");
-        Set<String> externalVolumeNames = MediaStore.getExternalVolumeNames(context);
 
-        // Pick first one which is not external
-        Uri uri = null;
-        try {
-            String[] vol = externalVolumeNames.toArray(new String[0]);
-            for (int i=0; i<vol.length; i++) {
-                String volume = vol[i];
-                if (!volume.contains(MediaStore.VOLUME_EXTERNAL)) {
-                    uri = MediaStore.Images.Media.getContentUri(vol[i]);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (uri == null) {
-            uri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        }
-
-        Log.i(TAG, "externalVolumeNames: " + externalVolumeNames);
-        Log.i(TAG, "uri: " + uri);
-        Log.i(TAG, "end getContentUri");
-        return uri;
-    }
 }
