@@ -56,16 +56,7 @@ public class IntroActivity extends AppCompatActivity {
                 Log.i(TAG, "introCheckBox clicked");
                 CheckBox checkBox = (CheckBox)v;
                 Context context = getApplicationContext();
-                SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
-                if(checkBox.isChecked()){
-                    Log.i(TAG, "introCheckBox true");
-                    sharedPreferences.edit().putBoolean("introCheckBox", true).apply();
-                } else {
-                    Log.i(TAG, "introCheckBox false");
-                    sharedPreferences.edit().putBoolean("introCheckBox", false).apply();
-                }
-                Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
-                Log.i(TAG, "introCheckBox: " + introCheckBox);
+                setIntroCheckBox(context, checkBox);
             }
         });
     }
@@ -76,5 +67,25 @@ public class IntroActivity extends AppCompatActivity {
         Log.i(TAG, "start onBackPressed");
         finishAffinity();
         Log.i(TAG, "end onBackPressed");
+    }
+
+    static public boolean getIntroCheckBox(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
+        Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
+        Log.i(TAG, "introCheckBox: " + introCheckBox);
+        return introCheckBox;
+    }
+
+    static public void setIntroCheckBox(Context context, CheckBox checkBox) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
+        if(checkBox.isChecked()){
+            Log.i(TAG, "introCheckBox true");
+            sharedPreferences.edit().putBoolean("introCheckBox", true).apply();
+        } else {
+            Log.i(TAG, "introCheckBox false");
+            sharedPreferences.edit().putBoolean("introCheckBox", false).apply();
+        }
+        Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
+        Log.i(TAG, "introCheckBox: " + introCheckBox);
     }
 }

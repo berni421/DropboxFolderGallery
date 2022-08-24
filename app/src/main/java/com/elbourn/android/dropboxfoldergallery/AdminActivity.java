@@ -1,10 +1,14 @@
 package com.elbourn.android.dropboxfoldergallery;
 
 import android.content.Context;
+import android.content.Intent;
+import android.media.MediaParser;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,7 +26,7 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
         Context context = getApplicationContext();
 
-        Button clearCacheFiles = findViewById(R.id.clearCacheFiles);
+        CheckBox clearCacheFiles = findViewById(R.id.clearCacheFiles);
         clearCacheFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +49,7 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
-        Button disconnectDropbox = findViewById(R.id.disconnectDropbox);
+        CheckBox disconnectDropbox = findViewById(R.id.disconnectDropbox);
         disconnectDropbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +64,41 @@ public class AdminActivity extends AppCompatActivity {
                 });
                 AuthActivity.disconnectDropbox(context);
                 finishAffinity();
+            }
+        });
+
+        CheckBox displayIntroduction = findViewById(R.id.displayIntroduction);
+        displayIntroduction.setChecked(IntroActivity.getIntroCheckBox(context));
+        displayIntroduction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "display introduction checked");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        String msg = "Please re-start Dropbox Folder Gallery to for changes.";
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+                CheckBox checkBox = (CheckBox)v;
+                IntroActivity.setIntroCheckBox(context, checkBox);
+            }
+        });
+
+        CheckBox billing = findViewById(R.id.billing);
+        billing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "billing checked");
+                Context context = getApplicationContext();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        String msg = "Sending request to billing system...";
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+                String url = "https://play.google.com/store/account/subscriptions";
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
             }
         });
     }
