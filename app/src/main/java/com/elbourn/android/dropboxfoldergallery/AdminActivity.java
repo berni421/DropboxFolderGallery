@@ -45,7 +45,8 @@ public class AdminActivity extends AppCompatActivity {
                         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                     }
                 });
-
+//                CheckBox checkBox = (CheckBox)v;
+//                checkBox.setChecked(false);
             }
         });
 
@@ -63,6 +64,8 @@ public class AdminActivity extends AppCompatActivity {
                     }
                 });
                 AuthActivity.disconnectDropbox(context);
+//                CheckBox checkBox = (CheckBox)v;
+//                checkBox.setChecked(false);
                 finishAffinity();
             }
         });
@@ -98,6 +101,8 @@ public class AdminActivity extends AppCompatActivity {
                 });
                 String url = "https://play.google.com/store/account/subscriptions";
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                CheckBox checkBox = (CheckBox)v;
+                checkBox.setChecked(false);
                 startActivity(browserIntent);
             }
         });

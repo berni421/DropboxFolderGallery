@@ -7,73 +7,6 @@
     android:padding="10dp"
     tools:context=".AdminActivity">
 
-    <CheckBox
-        android:id="@+id/clearCacheFiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Clear Cache Files"
-        app:layout_constraintTop_toBottomOf="@id/title" />
-
-    <CheckBox
-        android:id="@+id/disconnectDropbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Disconnect Dropbox"
-        app:layout_constraintTop_toBottomOf="@id/clearCacheFilesText" />
-
-    <CheckBox
-        android:id="@+id/displayIntroduction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Introduction screen"
-        app:layout_constraintTop_toBottomOf="@id/disconnectDropboxText" />
-
-    <CheckBox
-        android:id="@+id/billing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Billing"
-        app:layout_constraintTop_toBottomOf="@id/displayIntroductionText" />
-
-    <TextView
-        android:id="@+id/clearCacheFilesText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/clear_cache_files_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
-
-    <TextView
-        android:id="@+id/disconnectDropboxText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/disconnect_dropbox_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clearCacheFilesText" />
-
-    <TextView
-        android:id="@+id/displayIntroductionText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/display_introduction_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/disconnectDropboxText" />
-
-    <TextView
-        android:id="@+id/billingText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/billing_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/displayIntroductionText" />
 
     <TextView
         android:id="@+id/title"
@@ -84,6 +17,76 @@
         android:text="@string/administration_options"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <CheckBox
+        android:id="@+id/clearCacheFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/clear_cache_files_text"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <CheckBox
+        android:id="@+id/disconnectDropbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/disconnect_dropbox_text"
+        app:layout_constraintTop_toBottomOf="@id/clearCacheFiles" />
+
+    <CheckBox
+        android:id="@+id/displayIntroduction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/display_introduction_text"
+        app:layout_constraintTop_toBottomOf="@id/disconnectDropbox" />
+
+    <CheckBox
+        android:id="@+id/billing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/billing_text"
+        app:layout_constraintTop_toBottomOf="@id/displayIntroduction" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/clearCacheFilesText"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="16dp"-->
+<!--        android:text="@string/clear_cache_files_text"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/title" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/disconnectDropboxText"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="16dp"-->
+<!--        android:text="@string/disconnect_dropbox_text"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/clearCacheFilesText" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/displayIntroductionText"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="16dp"-->
+<!--        android:text="@string/display_introduction_text"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/disconnectDropboxText" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/billingText"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="16dp"-->
+<!--        android:text="@string/billing_text"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/displayIntroductionText" />-->
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
