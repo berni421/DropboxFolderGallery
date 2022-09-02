@@ -25,7 +25,7 @@ public class IntroActivity extends AppCompatActivity {
         Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
         Log.i(TAG, "introCheckBox: " + introCheckBox);
         if (introCheckBox) {;
-            startAuthActivity();
+            startSubscriptionsActivity();
         } else {
             setContentView(R.layout.activity_intro);
             setupButtons();
@@ -33,10 +33,10 @@ public class IntroActivity extends AppCompatActivity {
         Log.i(TAG, "end onCreate");
     }
 
-    void startAuthActivity() {
+    void startSubscriptionsActivity() {
         Context context = getApplicationContext();
-        Intent aA = new Intent(context, AuthActivity.class);
-        startActivity(aA);
+        Intent sA = new Intent(context, SubscriptionsActivity.class);
+        startActivity(sA);
     }
 
     void setupButtons() {
@@ -46,7 +46,7 @@ public class IntroActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "introImageButton clicked");
                 // now do auth activity
-                startAuthActivity();
+                startSubscriptionsActivity();
             }
         });
         CheckBox introCheckBox = findViewById(R.id.introCheckBox);
@@ -56,7 +56,7 @@ public class IntroActivity extends AppCompatActivity {
                 Log.i(TAG, "introCheckBox clicked");
                 CheckBox checkBox = (CheckBox)v;
                 Context context = getApplicationContext();
-                setIntroCheckBox(context, checkBox);
+                setIntroCheckBox(context, checkBox.isChecked());
             }
         });
     }
@@ -76,9 +76,9 @@ public class IntroActivity extends AppCompatActivity {
         return introCheckBox;
     }
 
-    static public void setIntroCheckBox(Context context, CheckBox checkBox) {
+    static public void setIntroCheckBox(Context context, Boolean checkBox) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
-        if(checkBox.isChecked()){
+        if(checkBox){
             Log.i(TAG, "introCheckBox true");
             sharedPreferences.edit().putBoolean("introCheckBox", true).apply();
         } else {

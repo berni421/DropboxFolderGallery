@@ -26,7 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GetFolderActivity extends AppCompatActivity implements SelectFolderViewAdapter.ItemClickListener {
+public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAdapter.ItemClickListener {
+
     private static String APP = BuildConfig.APPLICATION_ID;
     private static String TAG = "GetFolderActivity";
     SelectFolderViewAdapter adapter;
@@ -262,25 +263,25 @@ public class GetFolderActivity extends AppCompatActivity implements SelectFolder
                 getMoreFolderData();
             }
         });
-        ImageButton admin = findViewById(R.id.admin);
-        admin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "admin clicked");
-                // start admin activity
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Intent aA = new Intent(context, AdminActivity.class);
-                            startActivity(aA);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-            }
-        });
+//        ImageButton admin = findViewById(R.id.admin);
+//        admin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i(TAG, "admin clicked");
+//                // start admin activity
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Intent aA = new Intent(context, AdminActivity.class);
+//                            startActivity(aA);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//            }
+//        });
         Log.i(TAG, "end setupRView");
     }
 
