@@ -44,7 +44,7 @@ public class IntroActivity extends AppCompatActivity {
         introImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "introImageButton clicked");
+                Log.i(TAG, "Proceed clicked");
                 // now do auth activity
                 startSubscriptionsActivity();
             }
@@ -59,14 +59,6 @@ public class IntroActivity extends AppCompatActivity {
                 setIntroCheckBox(context, checkBox.isChecked());
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Log.i(TAG, "start onBackPressed");
-        finishAffinity();
-        Log.i(TAG, "end onBackPressed");
     }
 
     static public boolean getIntroCheckBox(Context context) {

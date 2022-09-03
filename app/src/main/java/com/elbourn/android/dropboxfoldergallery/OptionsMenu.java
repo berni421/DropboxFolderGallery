@@ -2,6 +2,7 @@ package com.elbourn.android.dropboxfoldergallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,8 @@ public class OptionsMenu extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -53,6 +56,9 @@ public class OptionsMenu extends AppCompatActivity {
                 return true;
             case R.id.subscriptionsIntroOff:
                 setIntroductionOff(item);
+                return true;
+            case R.id.subscriptionsRetry:
+                recreate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

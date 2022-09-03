@@ -19,4 +19,8 @@
         android:id="@+id/subscriptionsManage"
         android:title="Manage subscription."
         app:showAsAction="never" />
+    <item
+        android:id="@+id/subscriptionsRetry"
+        android:title="Retry subscription checks."
+        app:showAsAction="never" />
 </menu>

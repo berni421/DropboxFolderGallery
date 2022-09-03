@@ -82,10 +82,7 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
     public void onBackPressed() {
         String folder = getIntent().getStringExtra("folder");
         if (folder == null) {
-//        this.finishAffinity();
             finishAffinity();
-        } else {
-            finish();
         }
     }
 
@@ -327,7 +324,6 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
             f = "";
         } else if (f == getString(R.string.nosubfoldershere)) {
             f = "";
-            finish();
         } else {
                 f = "/" + f;
         }
