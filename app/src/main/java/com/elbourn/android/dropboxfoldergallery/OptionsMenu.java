@@ -39,8 +39,6 @@ public class OptionsMenu extends AppCompatActivity {
         return true;
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -77,12 +75,12 @@ public class OptionsMenu extends AppCompatActivity {
         Context context = getApplicationContext();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Disconnecting from dropbox - start Dropbox Folder Gallery to reconnect";
+                String msg = "Disconnecting from dropbox. Restarting...";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
         AuthActivity.disconnectDropbox(context);
-        finishAffinity();
+        startActivity(new Intent(context, DisclaimerActivity.class));
     }
 
     void clearCacheFiles() {

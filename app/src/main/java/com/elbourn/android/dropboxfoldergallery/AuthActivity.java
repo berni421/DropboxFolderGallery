@@ -64,8 +64,7 @@ public class AuthActivity extends AppCompatActivity {
         if (accessToken != null) {
             Log.i(TAG, "valid accessToken: " + accessToken);
             storeCredentialLocally(context, accessToken);
-            Intent gFA = new Intent(context, GetFolderActivity.class);
-            startActivity(gFA);
+            startActivity(new Intent(context, GetFolderActivity.class));
         }
         Log.i(TAG, "end onResume");
     }
@@ -96,11 +95,12 @@ public class AuthActivity extends AppCompatActivity {
         Log.i(TAG, "end storeCredentialLocally");
     }
 
-    //clear SharedPreferences
+    //clear dropbox credential
     public static void disconnectDropbox(Context context) {
         Log.i(TAG, "start disconnectDropbox");
+        String credential = null;
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
-        sharedPreferences.edit().remove("credential").apply();
+        sharedPreferences.edit().putString("credential", "invalid").apply();
         Log.i(TAG, "end disconnectDropbox");
     }
 

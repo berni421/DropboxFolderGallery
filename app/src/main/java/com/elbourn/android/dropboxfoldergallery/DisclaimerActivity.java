@@ -32,8 +32,7 @@ public class DisclaimerActivity extends AppCompatActivity {
 
     void startIntroActivity() {
         Context context = getApplicationContext();
-        Intent iA = new Intent(context, IntroActivity.class);
-        startActivity(iA);
+        startActivity(new Intent(context, IntroActivity.class));
     }
 
     void setupButtons() {
