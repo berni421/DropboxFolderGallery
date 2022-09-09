@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.elbourn.android.dropboxfoldergallery">
-    <!-- Android Q = sdk >= 29 = mediastore -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -21,29 +21,25 @@
             android:theme="@style/Theme.DropboxFolderGallery.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".IntroActivity"
             android:exported="false" />
-        <activity
-            android:name=".AuthActivity"
+        <activity android:name=".AuthActivity"
             android:exported="false" />
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
-            android:configChanges="orientation|keyboard"
-            android:exported="true"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="db-4sn6e2y4h18bvn9" />
-            </intent-filter>
+                android:configChanges="orientation|keyboard"
+                android:exported="true"
+                android:launchMode="singleTask" >
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <data android:scheme="db-4sn6e2y4h18bvn9" />
+                </intent-filter>
         </activity>
         <activity
             android:name=".GetFolderActivity"
@@ -58,11 +54,12 @@
             android:name=".OptionsMenu"
             android:exported="false" />
     </application>
+
+    <!-- Android Q = sdk >= 29 = mediastore -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />

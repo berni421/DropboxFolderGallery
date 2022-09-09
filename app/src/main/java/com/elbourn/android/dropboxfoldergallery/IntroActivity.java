@@ -44,7 +44,7 @@ public class IntroActivity extends OptionsMenu {
 
     void startMainActivity() {
         Context context = getApplicationContext();
-        startActivity(new Intent(context, GetFolderActivity.class));
+        startActivity(new Intent(context, AuthActivity.class));
     }
 
     void setupButtons() {

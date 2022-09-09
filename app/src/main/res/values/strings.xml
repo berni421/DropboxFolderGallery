@@ -19,4 +19,5 @@
     <string name="display_introduction_text">Hide (checked) or Show (unchecked) introduction page at next start.</string>
     <string name="billing_text">Review and control billing options.</string>
     <string name="administration_options">Administration Options</string>
+    <string name="into_donate_text">Please make a financial gift of your choice to support my software projects. See menu options top right - help feed the cat.</string>
 </resources>
