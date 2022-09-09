@@ -2,7 +2,6 @@ package com.elbourn.android.dropboxfoldergallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +33,7 @@ public class OptionsMenu extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_options, menu);
         Context context = getApplicationContext();
-        MenuItem introCheckBox = menu.findItem(R.id.subscriptionsIntroOff);
+        MenuItem introCheckBox = menu.findItem(R.id.menuIntroOff);
         introCheckBox.setChecked(IntroActivity.getIntroCheckBox(context));
         return true;
     }
@@ -43,20 +42,17 @@ public class OptionsMenu extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.clearCacheFiles:
-                clearCacheFiles();
-                return true;
-            case R.id.disconnectDropbox:
-                disconnectDropbox();
-                return true;
-            case R.id.subscriptionsManage:
-                startSubscriptionWebsite();
-                return true;
-            case R.id.subscriptionsIntroOff:
+            case R.id.menuIntroOff:
                 setIntroductionOff(item);
                 return true;
-            case R.id.subscriptionsRetry:
-                recreate();
+            case R.id.menuDonate:
+                startDonationWebsite();
+                return true;
+            case R.id.menuClearCacheFiles:
+                startClearCacheFiles();
+                return true;
+            case R.id.menuDisconnectDropbox:
+                startDisconnextDropbox();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -71,20 +67,38 @@ public class OptionsMenu extends AppCompatActivity {
         Log.i(TAG, "subscriptionsIntroOff: " + subscriptionsIntroOff);
     }
 
-    void disconnectDropbox() {
+    void startDonationWebsite() {
+        Log.i(TAG, "start startDonationWebsite");
         Context context = getApplicationContext();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Disconnecting from dropbox. Restarting...";
+                String msg = "Starting browser to feed the cat ...";
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+        String url = "https://www.elbourn.com/feed-the-cat/";
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+        Log.i(TAG, "end startDonationWebsite");
+    }
+
+
+    void startDisconnextDropbox() {
+        Log.i(TAG, "logout Dropbox clicked");
+        // clear shared preferences to disconnect dropbox link
+        Context context = getApplicationContext();
+        runOnUiThread(new Runnable() {
+            public void run() {
+                String msg = "Disconnecting from dropbox - restart to reconnect.";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
         AuthActivity.disconnectDropbox(context);
-        startActivity(new Intent(context, DisclaimerActivity.class));
+        finishAffinity();
     }
 
-    void clearCacheFiles() {
-        Context context = getApplicationContext();
+    void startClearCacheFiles() {
+        Log.i(TAG, "clearCacheFiles clicked");
         // clean cache
         File dir = new File(getCacheDir(), "");
         if (dir.exists()) {
@@ -93,26 +107,12 @@ public class OptionsMenu extends AppCompatActivity {
                 f.delete();
             }
         }
+        Context context = getApplicationContext();
         runOnUiThread(new Runnable() {
             public void run() {
                 String msg = "Cache files deleted";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    void startSubscriptionWebsite() {
-        Log.i(TAG, "start startSubscriptionWebsite");
-        Context context = getApplicationContext();
-        runOnUiThread(new Runnable() {
-            public void run() {
-                String msg = "Starting browser to access billing system...";
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-            }
-        });
-        String url = "https://play.google.com/store/account/subscriptions";
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(browserIntent);
-        Log.i(TAG, "end startSubscriptionWebsite");
     }
 }

@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 
-public class IntroActivity extends AppCompatActivity {
+public class IntroActivity extends OptionsMenu {
 
     static String APP = BuildConfig.APPLICATION_ID;
     static String TAG = "IntroActivity";
@@ -25,7 +25,7 @@ public class IntroActivity extends AppCompatActivity {
         Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
         Log.i(TAG, "introCheckBox: " + introCheckBox);
         if (introCheckBox) {;
-            startSubscriptionsActivity();
+            startMainActivity();
         } else {
             setContentView(R.layout.activity_intro);
             setupButtons();
@@ -33,10 +33,18 @@ public class IntroActivity extends AppCompatActivity {
         Log.i(TAG, "end onCreate");
     }
 
-    void startSubscriptionsActivity() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "start onResume");
+        setContentView(R.layout.activity_intro);
+        setupButtons();
+        Log.i(TAG, "end onResume");
+    }
+
+    void startMainActivity() {
         Context context = getApplicationContext();
-        Intent sA = new Intent(context, SubscriptionsActivity.class);
-        startActivity(sA);
+        startActivity(new Intent(context, GetFolderActivity.class));
     }
 
     void setupButtons() {
@@ -46,7 +54,7 @@ public class IntroActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "Proceed clicked");
                 // now do auth activity
-                startSubscriptionsActivity();
+                startMainActivity();
             }
         });
         CheckBox introCheckBox = findViewById(R.id.introCheckBox);

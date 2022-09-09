@@ -3,24 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/disconnectDropbox"
+        android:id="@+id/menuDisconnectDropbox"
         android:title="Disconnect Dropbox."
         app:showAsAction="never" />
     <item
-        android:id="@+id/clearCacheFiles"
+        android:id="@+id/menuClearCacheFiles"
         android:title="Clean temporary files."
         app:showAsAction="never" />
     <item
-        android:id="@+id/subscriptionsIntroOff"
-        android:title="Do not show introduction page."
+        android:id="@+id/menuIntroOff"
         android:checkable="true"
+        android:title="Turn off introduction page."
         app:showAsAction="never" />
     <item
-        android:id="@+id/subscriptionsManage"
-        android:title="Manage subscription."
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/subscriptionsRetry"
-        android:title="Retry subscription checks."
+        android:id="@+id/menuDonate"
+        android:title="Help feed the cat."
         app:showAsAction="never" />
 </menu>
