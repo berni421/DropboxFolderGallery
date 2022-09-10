@@ -83,6 +83,8 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
         String folder = getIntent().getStringExtra("folder");
         if (folder == null) {
             finishAffinity();
+        } else {
+            finish();
         }
     }
 

@@ -37,8 +37,16 @@ public class IntroActivity extends OptionsMenu {
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "start onResume");
-        setContentView(R.layout.activity_intro);
-        setupButtons();
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
+        Boolean introCheckBox = sharedPreferences.getBoolean("introCheckBox", false);
+        Log.i(TAG, "introCheckBox: " + introCheckBox);
+        if (introCheckBox) {;
+            startMainActivity();
+        } else {
+            setContentView(R.layout.activity_intro);
+            setupButtons();
+        }
         Log.i(TAG, "end onResume");
     }
 

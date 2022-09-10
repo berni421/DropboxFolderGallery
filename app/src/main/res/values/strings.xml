@@ -12,7 +12,9 @@
     <string name="navigation">\nNavigation\n\nThe folders screen lists the folders in your dropbox top level. The Play button beside the folder name starts the display of image thumbnails below that folder. Click on a folder name to reveal its sub-folders. If a fast forward button appears please click to load more folders.\n\nThe spanner icon selects administration tools. Here you can delete cache files, reset the introduction page, manage your billing options and disconnect your dropbox.\n\nThe Gallery screen downloads small thumbnails in batches. Thumbnails can be sorted by file time, folder name, and file names. File names are truncated to 10 characters which is enough to distiguish a standard day date of format yyyy-mm-dd. Scroll the thumbnails up or down to see all the images.\n\nClick on a image to download the full version into the gallery storage. The image is actually placed in a special gallery album called "Dropbox Folder Gallery". Long click a thumbnail to check the image details in your dropbox storage.</string>
     <string name="dont_show_next_time">Do not show next time?</string>
     <string name="title_activity_disclaimer">DisclaimerActivity</string>
-    <string name="disclaimer_text">Terms\n\nPlease ensure that before using this application that you expressly understand and agree that your use of this application is at your sole risk and that the application is provided “as is” and “as available” without warranty of any kind, to the maximum extent permitted by applicable law.\n\nOnce the applicable is available to you through your google account, you should check the application as soon as reasonably possible to ensure that it functions and performs as stated, and notify us or Provider as soon as reasonably possible if you find any errors or defect. See the Google Play Refund Policy for more information.</string>
+    <string name="disclaimer_text">Terms\n\n
+        Please ensure that before using this application that you expressly understand and agree that your use of this application is at your sole risk and that the application is provided “as is” and “as available” without warranty of any kind, to the maximum extent permitted by applicable law.\n\n
+        Once the applicable is available to you through your google account, you should check the application as soon as reasonably possible to ensure that it functions and performs as stated, and notify us or Provider as soon as reasonably possible if you find any errors or defect.</string>
     <string name="disclaimer_accept">I accept these terms.</string>
     <string name="clear_cache_files_text">Check to clean temporary files. Note that downloaded images will not be removed from your device gallery</string>
     <string name="disconnect_dropbox_text">Check to disconnect Dropbox Folder Gallery connection to your dropbox. Restart Dropbox Folder Gallery to login and reconnect or choose another dropbox</string>
@@ -20,4 +22,5 @@
     <string name="billing_text">Review and control billing options.</string>
     <string name="administration_options">Administration Options</string>
     <string name="into_donate_text">Please make a financial gift of your choice to support my software projects. See menu options top right - help feed the cat.</string>
+    <string name="invalid">invalid</string>
 </resources>

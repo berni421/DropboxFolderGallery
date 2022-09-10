@@ -2,26 +2,22 @@ package com.elbourn.android.dropboxfoldergallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.function.IntToDoubleFunction;
 
 public class OptionsMenu extends AppCompatActivity {
 
-    private String TAG = "OptionsMenu";
+//    private String TAG = "OptionsMenu";
+    private String TAG = this.getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +48,7 @@ public class OptionsMenu extends AppCompatActivity {
                 startClearCacheFiles();
                 return true;
             case R.id.menuDisconnectDropbox:
-                startDisconnextDropbox();
+                startDisconnectDropbox();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -83,19 +79,21 @@ public class OptionsMenu extends AppCompatActivity {
     }
 
 
-    void startDisconnextDropbox() {
+    void startDisconnectDropbox() {
         Log.i(TAG, "logout Dropbox clicked");
         // clear shared preferences to disconnect dropbox link
         Context context = getApplicationContext();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Disconnecting from dropbox - restart to reconnect.";
+                String msg = "Disconnecting from dropbox. Restart to reconnect.";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
         AuthActivity.disconnectDropbox(context);
+//        startMainActivity();
         finishAffinity();
     }
+
 
     void startClearCacheFiles() {
         Log.i(TAG, "clearCacheFiles clicked");
@@ -114,5 +112,10 @@ public class OptionsMenu extends AppCompatActivity {
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    void startMainActivity() {
+        Context context = getApplicationContext();
+        startActivity(new Intent(context, AuthActivity.class));
     }
 }

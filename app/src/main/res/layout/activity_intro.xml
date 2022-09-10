@@ -25,10 +25,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/dont_show_next_time"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/introDonateText"
-                />
-
-            <TextView android:id="@+id/introNextText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="16dp" android:text="To continue. Click play --^^" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/introImageButton"/>
+                app:layout_constraintTop_toBottomOf="@id/introDonateText" />
 
             <ImageButton
                 android:id="@+id/introImageButton"
@@ -73,7 +70,6 @@
                 app:layout_constraintTop_toBottomOf="@id/introPermissionsTextView"
                 app:srcCompat="@drawable/android_permissions" />
 
-
             <ImageView
                 android:id="@+id/introNavigationImage00"
                 android:layout_width="96dp"
@@ -84,6 +80,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationTextView"
                 app:srcCompat="@drawable/folders" />
+
 
             <ImageView
                 android:id="@+id/introNavigationImage01"
@@ -117,6 +114,15 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/introNavigationImage02" />
+
+            <TextView
+                android:id="@+id/introNextText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="To continue. Click play --^^"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/introImageButton" />
 
             <TextView
                 android:id="@+id/introDonateText"

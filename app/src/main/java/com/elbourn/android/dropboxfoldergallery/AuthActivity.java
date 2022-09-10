@@ -30,23 +30,12 @@ public class AuthActivity extends AppCompatActivity {
         DbxCredential accessToken = getLocalCredential(context);
         if (accessToken == null) {
             // New login
-            Log.i(TAG, "new login");
+            Log.i(TAG, "new login needed");
             String applicationKey = getString(R.string.dbx_api_app_key);
             String clientIdentifier = getString(R.string.client_identifier);
             Collection<String> scopes = Arrays.asList("account_info.read", "files.content.read");
             DbxRequestConfig requestConfig = new DbxRequestConfig(clientIdentifier);
             Auth.startOAuth2PKCE(context, applicationKey, requestConfig, scopes);
-        }
-        if (accessToken != null) {
-            if (accessToken.aboutToExpire()) {
-                // Try to refresh the token
-                Log.i(TAG, "old accessToken: " + accessToken);
-                accessToken = new DbxCredential(accessToken.getAccessToken(), -1L, accessToken.getRefreshToken(), accessToken.getAppKey());
-                if (accessToken != null) {
-                    Log.i(TAG, "new accessToken: " + accessToken);
-                    storeCredentialLocally(context, accessToken);
-                }
-            }
         }
         Log.i(TAG, "end onCreate");
     }
@@ -62,7 +51,11 @@ public class AuthActivity extends AppCompatActivity {
             Log.i(TAG, "new login accessToken: " + accessToken);
         }
         if (accessToken != null) {
-            Log.i(TAG, "valid accessToken: " + accessToken);
+            if (accessToken.aboutToExpire()) {
+                // Try to refresh the token
+                Log.i(TAG, "old accessToken: " + accessToken);
+                accessToken = new DbxCredential(accessToken.getAccessToken(), -1L, accessToken.getRefreshToken(), accessToken.getAppKey());
+            }
             storeCredentialLocally(context, accessToken);
             startActivity(new Intent(context, GetFolderActivity.class));
         }
@@ -74,12 +67,15 @@ public class AuthActivity extends AppCompatActivity {
         Log.i(TAG, "start getLocalCredential");
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
         String serializedCredentialText = sharedPreferences.getString("credential", null);
+        Log.i(TAG, "serializedCredentialText: " + serializedCredentialText);
         DbxCredential serializedCredential = null;
         if (serializedCredentialText != null) {
-            try {
-                serializedCredential = DbxCredential.Reader.readFully(serializedCredentialText);
-            } catch (JsonReadException e) {
-                e.printStackTrace();
+            if (!serializedCredentialText.equals(context.getString(R.string.invalid))) {
+                try {
+                    serializedCredential = DbxCredential.Reader.readFully(serializedCredentialText);
+                } catch (JsonReadException e) {
+                    e.printStackTrace();
+                }
             }
         }
         Log.i(TAG, "serializedCredential: " + serializedCredential);
@@ -98,9 +94,26 @@ public class AuthActivity extends AppCompatActivity {
     //clear dropbox credential
     public static void disconnectDropbox(Context context) {
         Log.i(TAG, "start disconnectDropbox");
-        String credential = null;
-        SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
-        sharedPreferences.edit().putString("credential", "invalid").apply();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DbxClientV2 client = getDropboxClient(context, getLocalCredential(context));
+                    Log.i(TAG, "token revoke");
+                    if (client != null) {
+                        // revoke at dropbox
+                        client.auth().tokenRevoke();
+                        // revoke local api cache
+                        com.dropbox.core.android.AuthActivity.result = null;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.i(TAG, "invalidate sharedPreferences");
+                SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
+                sharedPreferences.edit().putString("credential", context.getString(R.string.invalid)).apply();
+            }
+        }).start();
         Log.i(TAG, "end disconnectDropbox");
     }
 
