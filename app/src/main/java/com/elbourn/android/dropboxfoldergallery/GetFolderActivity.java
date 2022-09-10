@@ -151,11 +151,10 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
         }
         if (entries != null) {
             folderData = getActualFolderData(context, entries);
-            if (folder == "" ) {
+            if (folder == "") {
                 folderData.add(0, getString(R.string.everywhare));
             }
-            if (folderData.size() == 0)
-            {
+            if (folderData.size() == 0) {
                 folderData.add(getString(R.string.nosubfoldershere));
             }
             setupRView(folderData);
@@ -300,7 +299,7 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
     }
 
     private void dumpAdapterToLog() {
-        for (int i=0; i<adapterFolders.size(); i++) {
+        for (int i = 0; i < adapterFolders.size(); i++) {
             Log.i(TAG, "adapterFolder[" + i + "]: " + adapterFolders.get(i));
         }
     }
@@ -327,7 +326,7 @@ public class GetFolderActivity extends OptionsMenu implements SelectFolderViewAd
         } else if (f == getString(R.string.nosubfoldershere)) {
             f = "";
         } else {
-                f = "/" + f;
+            f = "/" + f;
         }
         String path = getIntent().getStringExtra("folder");
         if (path == null) {

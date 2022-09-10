@@ -47,9 +47,6 @@
         <activity
             android:name=".GetPictureActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".AdminActivity"-->
-<!--            android:exported="false" />-->
         <activity
             android:name=".OptionsMenu"
             android:exported="false" />

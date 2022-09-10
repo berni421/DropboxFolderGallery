@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.json.JsonReadException;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.users.FullAccount;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +29,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "start onCreate");
+        setContentView(R.layout.activity_auth);
         Context context = getApplicationContext();
         DbxCredential accessToken = getLocalCredential(context);
         if (accessToken == null) {
@@ -44,23 +48,57 @@ public class AuthActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "start onResume");
+        setContentView(R.layout.activity_auth);
         Context context = getApplicationContext();
         DbxCredential accessToken = getLocalCredential(context);
         if (accessToken == null) {
-            accessToken = Auth.getDbxCredential();
+            try {
+                accessToken = Auth.getDbxCredential();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Log.i(TAG, "new login accessToken: " + accessToken);
         }
         if (accessToken != null) {
+            storeCredentialLocally(context, accessToken);
             if (accessToken.aboutToExpire()) {
                 // Try to refresh the token
                 Log.i(TAG, "old accessToken: " + accessToken);
-                accessToken = new DbxCredential(accessToken.getAccessToken(), -1L, accessToken.getRefreshToken(), accessToken.getAppKey());
+                try {
+                    accessToken = new DbxCredential(accessToken.getAccessToken(), -1L, accessToken.getRefreshToken(), accessToken.getAppKey());
+                    storeCredentialLocally(context, accessToken);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            storeCredentialLocally(context, accessToken);
             startActivity(new Intent(context, GetFolderActivity.class));
         }
+        Log.i(TAG, "accessToken: " + accessToken);
         Log.i(TAG, "end onResume");
     }
+
+//            if (accessToken == null) {
+//                Log.i(TAG, "user failed to authorize.");
+//                runOnUiThread(new Runnable() {
+//                    public void run() {
+//                        String msg = "Please retry the dropbox authorization.";
+//                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+//                    }
+//                });
+//                startActivity(new Intent(context, AuthActivity.class));
+//            }
+
+    boolean checkDropboxLogin(Context context, DbxCredential accessToken) {
+        DbxClientV2 client = null;
+        try {
+            client = AuthActivity.getDropboxClient(context, accessToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (client != null);
+    }
+
+
 
     //get credential from SharedPreferences if it exists
     public static DbxCredential getLocalCredential(Context context) {
@@ -92,7 +130,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     //clear dropbox credential
-    public static void disconnectDropbox(Context context) {
+    public static void disconnectDropbox(Context context, OptionsMenu.MyListener c) {
         Log.i(TAG, "start disconnectDropbox");
         new Thread(new Runnable() {
             @Override
@@ -103,15 +141,16 @@ public class AuthActivity extends AppCompatActivity {
                     if (client != null) {
                         // revoke at dropbox
                         client.auth().tokenRevoke();
-                        // revoke local api cache
-                        com.dropbox.core.android.AuthActivity.result = null;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Log.i(TAG, "revoke local dropbbox credential cache");
+                com.dropbox.core.android.AuthActivity.result = null;
                 Log.i(TAG, "invalidate sharedPreferences");
                 SharedPreferences sharedPreferences = context.getSharedPreferences(APP, MODE_PRIVATE);
                 sharedPreferences.edit().putString("credential", context.getString(R.string.invalid)).apply();
+                c.somethingHappened();
             }
         }).start();
         Log.i(TAG, "end disconnectDropbox");

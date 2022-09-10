@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptionsMenu extends AppCompatActivity {
 
-//    private String TAG = "OptionsMenu";
+    //    private String TAG = "OptionsMenu";
     private String TAG = this.getClass().getSimpleName();
 
     @Override
@@ -85,15 +87,45 @@ public class OptionsMenu extends AppCompatActivity {
         Context context = getApplicationContext();
         runOnUiThread(new Runnable() {
             public void run() {
-                String msg = "Disconnecting from dropbox. Restart to reconnect.";
+                String msg = "Disconnecting from dropbox.";
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
-        AuthActivity.disconnectDropbox(context);
-//        startMainActivity();
-        finishAffinity();
+        MyListener c = new MyListener() {
+            @Override
+            public void somethingHappened() {
+                startMainActivity();
+            }
+        };
+        AuthActivity.disconnectDropbox(context, c);
     }
 
+    interface MyListener{
+        void somethingHappened();
+    }
+
+    public class MyForm implements MyListener{
+        MyClass myClass;
+        public MyForm(){
+            this.myClass = new MyClass();
+            myClass.addListener(this);
+        }
+        public void somethingHappened(){
+            System.out.println("Called me!");
+        }
+    }
+    public class MyClass{
+        private List<MyListener> listeners = new ArrayList<MyListener>();
+
+        public void addListener(MyListener listener) {
+            listeners.add(listener);
+        }
+        void notifySomethingHappened(){
+            for(MyListener listener : listeners){
+                listener.somethingHappened();
+            }
+        }
+    }
 
     void startClearCacheFiles() {
         Log.i(TAG, "clearCacheFiles clicked");
