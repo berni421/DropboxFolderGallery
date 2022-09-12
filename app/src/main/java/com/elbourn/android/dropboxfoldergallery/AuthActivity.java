@@ -77,16 +77,11 @@ public class AuthActivity extends AppCompatActivity {
         Log.i(TAG, "end onResume");
     }
 
-//            if (accessToken == null) {
-//                Log.i(TAG, "user failed to authorize.");
-//                runOnUiThread(new Runnable() {
-//                    public void run() {
-//                        String msg = "Please retry the dropbox authorization.";
-//                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//                startActivity(new Intent(context, AuthActivity.class));
-//            }
+    @Override
+    public void onBackPressed() {
+        // restart authentication
+        recreate();
+    }
 
     boolean checkDropboxLogin(Context context, DbxCredential accessToken) {
         DbxClientV2 client = null;
