@@ -9,8 +9,8 @@ android {
         applicationId "com.elbourn.android.dropboxfoldergallery"
         minSdk 23
         targetSdk 32
-        versionCode 27
-        versionName "0.27"
+        versionCode 28
+        versionName "1.27"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,6 +30,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'com.elbourn.android.dropboxfoldergallery'
 }
 
 dependencies {
