@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.elbourn.android.dropboxfoldergallery"
         minSdk 23
-        targetSdk 32
-        versionCode 28
-        versionName "1.27"
+        targetSdk 33
+        versionCode 29
+        versionName "1.28"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
